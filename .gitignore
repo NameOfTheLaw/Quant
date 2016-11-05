@@ -1,0 +1,5 @@
+.idea/
+target/
+src/test/
+src/main/java/ru/ifmo/quant/depricated
+src/main/java/ru/ifmo/quant/testclasses

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="persistenceUnit">
+        <class>ru.ifmo.quant.entity.AccountEntity</class>
+        <class>ru.ifmo.quant.entity.NotificationEntity</class>
+        <class>ru.ifmo.quant.entity.TaskEntity</class>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@students.dce.ifmo.ru:1521:XE"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver"/>
+            <property name="hibernate.connection.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+        </properties>
+    </persistence-unit>
+</persistence>
