@@ -21,10 +21,6 @@
         <property name="password" value="${password}"/>
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter">
@@ -36,6 +32,35 @@
             </props>
         </property>
         <property name="packagesToScan" value="ru.ifmo.quant"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean id="QuantDao" class="ru.ifmo.quant.dao.QuantDao">
+        <property name="accountDao" ref="accountDao"/>
+        <property name="notificationDao" ref="notificationDao"/>
+        <property name="taskDao" ref="taskDao"/>
+    </bean>
+
+    <bean id="messageHandler" class="ru.ifmo.quant.handlers.MessageHandler">
+        <property name="processContainer">
+            <bean class="ru.ifmo.quant.ProcessContainer"/>
+        </property>
+        <property name="quantDao" ref="QuantDao"/>
+        <property name="commandFactory">
+            <bean class="ru.ifmo.quant.commands.CommandFactory"/>
+        </property>
+    </bean>
+
+    <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
+        <property name="botName" value="${telegramBotUsername}"/>
+        <property name="botToken" value="${telegramBotToken}"/>
+        <property name="telegramBotsApi">
+            <bean class="org.telegram.telegrambots.TelegramBotsApi"/>
+        </property>
+        <property name="messageHandler" ref="messageHandler"/>
     </bean>
 
     <!--@Transaction annotation support -->
@@ -51,5 +76,5 @@
     <jpa:repositories base-package="ru.ifmo.quant.dao" entity-manager-factory-ref="entityManagerFactory"
                       transaction-manager-ref="transactionManager"/>
 
-    <context:property-placeholder location="jdbc.properties"/>
+    <context:property-placeholder location="*.properties"/>
 </beans>

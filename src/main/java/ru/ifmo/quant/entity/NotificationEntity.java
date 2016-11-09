@@ -9,7 +9,6 @@ import java.util.Date;
  * Created by andrey on 04.11.2016.
  */
 @Entity
-//@Table(name = "NOTIFICATION", schema = "S191978", catalog = "")
 @Table(name = "NOTIFICATION")
 public class NotificationEntity {
     private Long id;
@@ -19,8 +18,10 @@ public class NotificationEntity {
 
     @Id
     @Column(name = "ID")
-    @GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "NOTIFICATION_SEQ"))
-    @GeneratedValue(generator = "generator")
+    //@GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "NOTIFICATION_SEQ"))
+    //@GeneratedValue(generator = "generator")
+    @SequenceGenerator(name = "generator", sequenceName = "NOTIFICATION_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     public Long getId() {
         return id;
     }

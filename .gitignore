@@ -3,3 +3,5 @@ target/
 src/test/
 src/main/java/ru/ifmo/quant/depricated
 src/main/java/ru/ifmo/quant/testclasses
+src/main/resources/telegram.properties
+src/main/resources/jdbc.properties

@@ -1,6 +1,7 @@
 package ru.ifmo.quant.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import ru.ifmo.quant.MessageAddress;
 
 import javax.persistence.*;
 import java.util.List;
@@ -18,8 +19,10 @@ public class AccountEntity {
 
     @Id
     @Column(name = "ID")
-    @GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "ACCOUNT_SEQ"))
-    @GeneratedValue(generator = "generator")
+    //@GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "ACCOUNT_SEQ"))
+    //@GeneratedValue(generator = "generator")
+    @SequenceGenerator(name = "generator", sequenceName = "ACCOUNT_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     public Long getId() {
         return id;
     }
@@ -77,5 +80,14 @@ public class AccountEntity {
 
     public void setTasks(List<TaskEntity> tasks) {
         this.tasks = tasks;
+    }
+
+    public void insertKey(MessageAddress messageAddress) {
+        if (messageAddress.getSocial().equals(MessageAddress.TELEGRAM_ALIAS)) {
+            setTelegramKey(messageAddress.getKey());
+        }
+        if (messageAddress.getSocial().equals(MessageAddress.VK_ALIAS)) {
+            setVkKey(messageAddress.getKey());
+        }
     }
 }

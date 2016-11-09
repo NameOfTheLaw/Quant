@@ -10,7 +10,6 @@ import java.util.List;
  * Created by andrey on 04.11.2016.
  */
 @Entity
-//@Table(name = "TASK", schema = "S191978", catalog = "")
 @Table(name = "TASK")
 public class TaskEntity {
     private Long id;
@@ -23,8 +22,10 @@ public class TaskEntity {
 
     @Id
     @Column(name = "ID")
-    @GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "TASK_SEQ"))
-    @GeneratedValue(generator = "generator")
+    //@GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "TASK_SEQ"))
+    //@GeneratedValue(generator = "generator")
+    @SequenceGenerator(name = "generator", sequenceName = "TASK_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     public Long getId() {
         return id;
     }

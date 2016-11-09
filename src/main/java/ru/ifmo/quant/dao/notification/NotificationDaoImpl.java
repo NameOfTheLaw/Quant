@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * Created by andrey on 05.11.2016.
  */
-@Service("NotificationDao")
+@Service("notificationDao")
 @Repository
 @Transactional
 public class NotificationDaoImpl implements NotificationDao {
