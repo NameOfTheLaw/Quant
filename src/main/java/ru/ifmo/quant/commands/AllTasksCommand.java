@@ -11,10 +11,15 @@ import java.util.List;
 /**
  * Created by andrey on 09.11.2016.
  */
-public class TodayCommand extends AbstractCommand {
+public class AllTasksCommand extends AbstractCommand {
 
     public String perform(QuantMessage input, AccountEntity account, HandlingProcess process) throws WrongContextCommandException {
         //TODO: realise perform method
-        return "TODAY_TEMPLATE";
+        List<TaskEntity> tasks = dataService.findTaskEntity(account);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TaskEntity task: tasks) {
+            stringBuilder.append("> "+task.toString());
+        }
+        return stringBuilder.toString();
     }
 }

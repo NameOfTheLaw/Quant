@@ -5,6 +5,7 @@
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context
@@ -12,7 +13,7 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        http://www.springframework.org/schema/data/jpa
-       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${driverClassName}"/>
@@ -38,20 +39,20 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <bean id="QuantDao" class="ru.ifmo.quant.dao.QuantDao">
-        <property name="accountDao" ref="accountDao"/>
-        <property name="notificationDao" ref="notificationDao"/>
-        <property name="taskDao" ref="taskDao"/>
+    <bean id="dataService" class="ru.ifmo.quant.dao.DataServiceImpl"/>
+
+    <bean id="commandFactory" class="ru.ifmo.quant.commands.CommandFactory">
+        <property name="commands">
+            <util:properties id="myProps" location="classpath:commands.properties"/>
+        </property>
     </bean>
 
     <bean id="messageHandler" class="ru.ifmo.quant.handlers.MessageHandler">
         <property name="processContainer">
             <bean class="ru.ifmo.quant.ProcessContainer"/>
         </property>
-        <property name="quantDao" ref="QuantDao"/>
-        <property name="commandFactory">
-            <bean class="ru.ifmo.quant.commands.CommandFactory"/>
-        </property>
+        <property name="dataService" ref="dataService"/>
+        <property name="commandFactory" ref="commandFactory"/>
     </bean>
 
     <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">

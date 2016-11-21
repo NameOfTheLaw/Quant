@@ -35,7 +35,6 @@ public class TelegramHandler extends TelegramLongPollingBot implements Initializ
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-
     }
 
     public String getBotUsername() {

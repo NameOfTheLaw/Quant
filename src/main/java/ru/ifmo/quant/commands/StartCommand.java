@@ -18,7 +18,7 @@ public class StartCommand extends AbstractCommand {
                 stringBuilder.append("I see you new here! I register you.").append("\n");
                 AccountEntity accountEntity = new AccountEntity();
                 accountEntity.insertKey(input.getMessageAddress());
-                accountDao.save(accountEntity);
+                dataService.save(accountEntity);
             } else {
                 stringBuilder.append("Nice to meet you!");
             }

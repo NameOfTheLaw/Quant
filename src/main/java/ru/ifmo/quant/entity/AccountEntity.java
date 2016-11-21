@@ -59,8 +59,8 @@ public class AccountEntity {
         AccountEntity that = (AccountEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (vkKey != null ? !vkKey.equals(that.vkKey) : that.vkKey != null) return false;
-        if (telegramKey != null ? !telegramKey.equals(that.telegramKey) : that.telegramKey != null) return false;
+        //if (vkKey != null ? !vkKey.equals(that.vkKey) : that.vkKey != null) return false;
+        //if (telegramKey != null ? !telegramKey.equals(that.telegramKey) : that.telegramKey != null) return false;
 
         return true;
     }
@@ -68,8 +68,8 @@ public class AccountEntity {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (vkKey != null ? vkKey.hashCode() : 0);
-        result = 31 * result + (telegramKey != null ? telegramKey.hashCode() : 0);
+        //result = 31 * result + (vkKey != null ? vkKey.hashCode() : 0);
+        //result = 31 * result + (telegramKey != null ? telegramKey.hashCode() : 0);
         return result;
     }
 

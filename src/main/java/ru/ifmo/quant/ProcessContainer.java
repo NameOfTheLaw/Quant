@@ -2,32 +2,26 @@ package ru.ifmo.quant;
 
 import ru.ifmo.quant.entity.AccountEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by andrey on 08.11.2016.
  */
 public class ProcessContainer {
 
-    private List<HandlingProcess> processes = new ArrayList<HandlingProcess>();
+    private Map<AccountEntity,HandlingProcess> processMap = new HashMap<AccountEntity, HandlingProcess>();
 
     public HandlingProcess getProcess(AccountEntity accountEntity) {
-        if (accountEntity != null && processes.contains(accountEntity)) {
-            int index = processes.indexOf(accountEntity);
-            return processes.get(index);
-        }
-        return null;
+        return processMap.get(accountEntity);
     };
 
     public void addProcess(HandlingProcess process) {
-        if (process != null) {
-            processes.add(process);
+        if (process != null && process.getAccountEntity() != null) {
+            processMap.put(process.getAccountEntity(),process);
         }
     };
 
     public void killProcess(HandlingProcess process) {
-        processes.remove(process);
+        processMap.remove(process.getAccountEntity());
     }
 }

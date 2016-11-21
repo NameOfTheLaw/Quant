@@ -118,4 +118,13 @@ public class TaskEntity {
     public void setNotifications(List<NotificationEntity> notifications) {
         this.notifications = notifications;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (getTitle() != null) stringBuilder.append(title+"\n");
+        stringBuilder.append(getBody()+"\n");
+        stringBuilder.append(getClientDate().toString());
+        return stringBuilder.toString();
+    }
 }
