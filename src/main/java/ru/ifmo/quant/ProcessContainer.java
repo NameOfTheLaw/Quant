@@ -17,6 +17,7 @@ public class ProcessContainer {
 
     public void addProcess(HandlingProcess process) {
         if (process != null && process.getAccountEntity() != null) {
+            process.setProcessContainer(this);
             processMap.put(process.getAccountEntity(),process);
         }
     };

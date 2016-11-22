@@ -8,8 +8,7 @@ import ru.ifmo.quant.entity.AccountEntity;
  */
 public interface AccountRepository extends CrudRepository<AccountEntity, Long>{
 
-    AccountEntity findOneIgnoreTask(Long id);
-    AccountEntity findByVkKeyIgnoreTask(Long key);
-    AccountEntity findByTelegramKeyIgnoreTask(Long key);
+    AccountEntity findByVkKey(Long key);
+    AccountEntity findByTelegramKey(Long key);
 
 }

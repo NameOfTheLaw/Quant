@@ -47,10 +47,10 @@
         </property>
     </bean>
 
+    <bean id="processContainer" class="ru.ifmo.quant.ProcessContainer"/>
+
     <bean id="messageHandler" class="ru.ifmo.quant.handlers.MessageHandler">
-        <property name="processContainer">
-            <bean class="ru.ifmo.quant.ProcessContainer"/>
-        </property>
+        <property name="processContainer" ref="processContainer"/>
         <property name="dataService" ref="dataService"/>
         <property name="commandFactory" ref="commandFactory"/>
     </bean>

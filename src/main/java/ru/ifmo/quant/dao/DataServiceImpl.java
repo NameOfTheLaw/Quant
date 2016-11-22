@@ -3,7 +3,6 @@ package ru.ifmo.quant.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.ifmo.quant.MessageAddress;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.commands.AbstractCommand;
 import ru.ifmo.quant.entity.AccountEntity;
 import ru.ifmo.quant.entity.NotificationEntity;
 import ru.ifmo.quant.entity.TaskEntity;
@@ -26,7 +25,7 @@ public class DataServiceImpl implements DataService {
     TaskRepository taskRepository;
 
     public AccountEntity findAccountEntity(Long id) {
-        return accountRepository.findOneIgnoreTask(id);
+        return accountRepository.findOne(id);
     }
 
     public AccountEntity findAccountEntity(QuantMessage message) {
@@ -35,9 +34,9 @@ public class DataServiceImpl implements DataService {
 
     public AccountEntity findAccountEntityByKey(String socialKey, Long key) {
         if (socialKey.equals(MessageAddress.TELEGRAM_ALIAS))
-            return accountRepository.findByTelegramKeyIgnoreTask(key);
+            return accountRepository.findByTelegramKey(key);
         if (socialKey.equals(MessageAddress.VK_ALIAS))
-            return accountRepository.findByVkKeyIgnoreTask(key);
+            return accountRepository.findByVkKey(key);
         return null;
     }
 

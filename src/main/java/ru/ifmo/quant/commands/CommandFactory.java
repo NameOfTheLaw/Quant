@@ -3,6 +3,7 @@ package ru.ifmo.quant.commands;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,6 +17,7 @@ public class CommandFactory implements InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         Enumeration enumeration = commands.propertyNames();
+        commandMap = new HashMap<String, Class>();
         while (enumeration.hasMoreElements()) {
             String alias = (String) enumeration.nextElement();
             try {
@@ -30,13 +32,13 @@ public class CommandFactory implements InitializingBean {
 
     //TODO: realise "Strategy" pattern
     public QuantCommand build(String body) {
-        String alias = body.replaceAll("\\s+", " ").trim();
+        String alias = body.replaceAll("\\s+", " ").trim().toLowerCase();
         QuantCommand command = null;
         try {
             command = (QuantCommand) commandMap.get(alias).newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NullPointerException e) {
+            //ignore. it's ok. all goes as planned
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return command;

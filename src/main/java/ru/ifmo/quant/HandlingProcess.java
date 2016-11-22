@@ -1,5 +1,6 @@
 package ru.ifmo.quant;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.ifmo.quant.entity.AccountEntity;
 
 /**
@@ -7,12 +8,17 @@ import ru.ifmo.quant.entity.AccountEntity;
  */
 public class HandlingProcess {
 
+    //process life time = 1 hour
+    public static final Long PROCESS_LIFE_TIME = 3600000l;
     private HandleState handleState;
     private AccountEntity accountEntity;
+    private Long lastActiveTime;
+    private ProcessContainer processContainer;
 
     public HandlingProcess(HandleState handleState, AccountEntity accountEntity) {
         this.handleState = handleState;
         this.accountEntity = accountEntity;
+        this.lastActiveTime = System.currentTimeMillis();
     }
 
     @Override
@@ -44,5 +50,21 @@ public class HandlingProcess {
 
     public void setAccountEntity(AccountEntity accountEntity) {
         this.accountEntity = accountEntity;
+    }
+
+    public Long getLastActiveTime() {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime(Long lastActiveTime) {
+        this.lastActiveTime = lastActiveTime;
+    }
+
+    public ProcessContainer getProcessContainer() {
+        return processContainer;
+    }
+
+    public void setProcessContainer(ProcessContainer processContainer) {
+        this.processContainer = processContainer;
     }
 }

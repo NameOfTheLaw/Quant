@@ -27,24 +27,39 @@ public class MessageHandler {
         //TODO: optimise the message handle process
         QuantCommand command = commandFactory.build(input.getText());
         if (process == null) {
-
-        } else {
-
+            process = new HandlingProcess(null, accountEntity);
+            processContainer.addProcess(process);
         }
+        String answer;
         if (command != null) {
-            //One of commands
-            String commandResult;
+            //Killing active process state
+            if (process.getHandleState() != null) process.setHandleState(null);
+            //Starting process
             try {
-                commandResult = command.perform(input, accountEntity, process);
+                answer = command.perform(input, accountEntity, process, dataService);
             } catch (WrongContextCommandException e) {
                 e.printStackTrace();
-                commandResult = "Hmm, i don't understand that;( \n Please tell me what do you want";
+                answer = "Hmm, i don't understand that;( \n Please tell me what do you want";
+            } catch (Exception e) {
+                e.printStackTrace();
+                answer = "Some errors happend in my mind";
             }
-            output.setText(commandResult);
+        } else if (process.getHandleState() != null) {
+            //Continue process
+            try {
+                command = process.getHandleState().getCommand();
+                answer = command.perform(input, accountEntity, process, dataService);
+            } catch (WrongContextCommandException e) {
+                e.printStackTrace();
+                answer = "Hmm, i don't understand that;( \n Please tell me what do you want";
+            } catch (Exception e) {
+                e.printStackTrace();
+                answer = "Some errors happend in my mind";
+            }
         } else {
-            //Creating task or notification (creation process)
-            output.setText("I don't know that command!");
+            answer = "I don't know that command!";
         }
+        output.setText(answer);
         return output;
     };
 
