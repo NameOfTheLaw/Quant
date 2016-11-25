@@ -20,8 +20,16 @@ public class DateExtractor {
         this.rawText = rawText;
         PrettyTimeParser ptp = new PrettyTimeParser();
         List<DateGroup> parse = ptp.parseSyntax(rawText);
-        date = parse.get(0).getDates().get(0);
-        text = rawText.replace(parse.get(0).getText(), "").replaceAll("\\s+", " ").trim();
+        date = null;
+        text = rawText;
+        try {
+            date = parse.get(0).getDates().get(0);
+            text = rawText.replace(parse.get(0).getText(), "").replaceAll("\\s+", " ").trim();
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Date getDate() {

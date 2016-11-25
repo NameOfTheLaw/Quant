@@ -12,7 +12,7 @@ import ru.ifmo.quant.exceptions.WrongContextCommandException;
  */
 public class PreTaskCreatingCommand implements QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) throws WrongContextCommandException {
+    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService){
         process.setHandleState(HandleState.CREATING_TASK);
         String answer = "Ok, just write your task and time below";
         return answer;

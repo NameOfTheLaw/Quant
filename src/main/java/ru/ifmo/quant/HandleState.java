@@ -1,15 +1,14 @@
 package ru.ifmo.quant;
 
-import ru.ifmo.quant.commands.QuantCommand;
-import ru.ifmo.quant.commands.TaskCreatingCommand;
+import ru.ifmo.quant.commands.*;
 
 /**
  * Created by andrey on 08.11.2016.
  */
 public enum HandleState {
-    CONFIRMATION_NOTIFICATION(null, null),
-    CREATING_NOTIFICATION(CONFIRMATION_NOTIFICATION, null),
-    CONFIRMATION_TASK(CREATING_NOTIFICATION, null),
+    CONFIRMATION_NOTIFICATION(null, NotificationConfirmationCommand.class),
+    CREATING_NOTIFICATION(CONFIRMATION_NOTIFICATION, NotificationCreatingCommand.class),
+    CONFIRMATION_TASK(CREATING_NOTIFICATION, TaskConfirmationCommand.class),
     CREATING_TASK(CONFIRMATION_TASK, TaskCreatingCommand.class);
 
     private HandleState nextState;
@@ -29,6 +28,10 @@ public enum HandleState {
     }
 
     public QuantCommand getCommand() throws IllegalAccessException, InstantiationException {
-        return (QuantCommand) commandClass.newInstance();
+        if (commandClass!=null) {
+            return (QuantCommand) commandClass.newInstance();
+        } else {
+            throw new NullPointerException();
+        }
     }
 }

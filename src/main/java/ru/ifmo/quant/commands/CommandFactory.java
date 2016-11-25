@@ -32,16 +32,20 @@ public class CommandFactory implements InitializingBean {
 
     //TODO: realise "Strategy" pattern
     public QuantCommand build(String body) {
-        String alias = body.replaceAll("\\s+", " ").trim().toLowerCase();
-        QuantCommand command = null;
-        try {
-            command = (QuantCommand) commandMap.get(alias).newInstance();
-        } catch (NullPointerException e) {
-            //ignore. it's ok. all goes as planned
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (body != null) {
+            String alias = body.replaceAll("\\s+", " ").trim().toLowerCase();
+            QuantCommand command = null;
+            try {
+                command = (QuantCommand) commandMap.get(alias).newInstance();
+            } catch (NullPointerException e) {
+                //ignore. it's ok. all goes as planned
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return command;
+        } else {
+            throw new NullPointerException();
         }
-        return command;
     }
 
     public Properties getCommands() {

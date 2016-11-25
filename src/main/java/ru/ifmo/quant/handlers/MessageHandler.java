@@ -6,6 +6,7 @@ import ru.ifmo.quant.ProcessContainer;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.CommandFactory;
 import ru.ifmo.quant.commands.QuantCommand;
+import ru.ifmo.quant.commands.TaskCreatingCommand;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.entity.AccountEntity;
 import ru.ifmo.quant.exceptions.WrongContextCommandException;
@@ -25,7 +26,12 @@ public class MessageHandler {
         output.setMessageAddress(input.getMessageAddress());
         HandlingProcess process = processContainer.getProcess(accountEntity);
         //TODO: optimise the message handle process
-        QuantCommand command = commandFactory.build(input.getText());
+        QuantCommand command = null;
+        try {
+            command = commandFactory.build(input.getText());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         if (process == null) {
             process = new HandlingProcess(null, accountEntity);
             processContainer.addProcess(process);
@@ -33,31 +39,41 @@ public class MessageHandler {
         String answer;
         if (command != null) {
             //Killing active process state
-            if (process.getHandleState() != null) process.setHandleState(null);
+            if (process.getHandleState() != null) process.removeHandleState();
             //Starting process
             try {
                 answer = command.perform(input, accountEntity, process, dataService);
-            } catch (WrongContextCommandException e) {
+            } catch (NullPointerException e) {
                 e.printStackTrace();
-                answer = "Hmm, i don't understand that;( \n Please tell me what do you want";
+                answer = "I don't know how to process this right now";
+                process.removeHandleState();
             } catch (Exception e) {
                 e.printStackTrace();
-                answer = "Some errors happend in my mind";
+                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
             }
         } else if (process.getHandleState() != null) {
             //Continue process
             try {
                 command = process.getHandleState().getCommand();
                 answer = command.perform(input, accountEntity, process, dataService);
-            } catch (WrongContextCommandException e) {
+            } catch (NullPointerException e) {
                 e.printStackTrace();
-                answer = "Hmm, i don't understand that;( \n Please tell me what do you want";
+                answer = "I don't know how to process this right now";
+                process.removeHandleState();
             } catch (Exception e) {
                 e.printStackTrace();
-                answer = "Some errors happend in my mind";
+                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
             }
         } else {
-            answer = "I don't know that command!";
+            //answer = "I don't know that command!";
+            //TODO: fix bug below
+            command = new TaskCreatingCommand();
+            try {
+                answer = command.perform(input, accountEntity, process, dataService);
+            } catch (Exception e) {
+                e.printStackTrace();
+                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+            }
         }
         output.setText(answer);
         return output;

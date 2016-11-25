@@ -2,6 +2,9 @@ package ru.ifmo.quant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.ifmo.quant.entity.AccountEntity;
+import ru.ifmo.quant.entity.TaskEntity;
+
+import java.util.HashMap;
 
 /**
  * Created by andrey on 08.11.2016.
@@ -13,12 +16,13 @@ public class HandlingProcess {
     private HandleState handleState;
     private AccountEntity accountEntity;
     private Long lastActiveTime;
-    private ProcessContainer processContainer;
+    private HashMap<String,Object> processParameters;
 
     public HandlingProcess(HandleState handleState, AccountEntity accountEntity) {
         this.handleState = handleState;
         this.accountEntity = accountEntity;
         this.lastActiveTime = System.currentTimeMillis();
+        processParameters = new HashMap<String, Object>();
     }
 
     @Override
@@ -60,11 +64,21 @@ public class HandlingProcess {
         this.lastActiveTime = lastActiveTime;
     }
 
-    public ProcessContainer getProcessContainer() {
-        return processContainer;
+    public void setParameter(String name, Object object) {
+        processParameters.put(name, object);
     }
 
-    public void setProcessContainer(ProcessContainer processContainer) {
-        this.processContainer = processContainer;
+    public <K> K getParameter(String name, Class<K> className) {
+        return (K) processParameters.get(name);
     }
+
+    public void clearParameters() {
+        processParameters.clear();
+    }
+
+    public void removeHandleState() {
+        setHandleState(null);
+        clearParameters();
+    }
+
 }

@@ -11,7 +11,7 @@ import ru.ifmo.quant.exceptions.WrongContextCommandException;
  */
 public class WeekCommand implements QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) throws WrongContextCommandException {
+    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
         //TODO: realise WeekCommand class logic
         return "WEEK_TEMPLATE";
     }

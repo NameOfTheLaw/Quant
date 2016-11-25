@@ -11,5 +11,5 @@ import ru.ifmo.quant.exceptions.WrongContextCommandException;
  */
 public interface QuantCommand {
 
-    String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) throws WrongContextCommandException;
+    String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService);
 }

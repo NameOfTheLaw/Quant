@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TodayCommand implements QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) throws WrongContextCommandException {
+    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
         //TODO: realise perform method
         return "TODAY_TEMPLATE";
     }

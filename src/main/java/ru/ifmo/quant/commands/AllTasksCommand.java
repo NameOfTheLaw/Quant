@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class AllTasksCommand implements QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) throws WrongContextCommandException {
+    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
         //TODO: realise perform method
         List<TaskEntity> tasks = dataService.findTaskEntity(account);
         StringBuilder stringBuilder = new StringBuilder();
