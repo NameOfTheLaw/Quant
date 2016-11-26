@@ -6,14 +6,13 @@
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-2.5.xsd
-       http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-       http://www.springframework.org/schema/data/jpa
-       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${driverClassName}"/>
@@ -53,6 +52,7 @@
         <property name="processContainer" ref="processContainer"/>
         <property name="dataService" ref="dataService"/>
         <property name="commandFactory" ref="commandFactory"/>
+        <property name="sendingPool" ref="SendingPool"/>
     </bean>
 
     <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
@@ -64,18 +64,28 @@
         <property name="messageHandler" ref="messageHandler"/>
     </bean>
 
-    <!--@Transaction annotation support -->
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <bean id="SendingPool" class="ru.ifmo.quant.executors.MessagesPool">
+        <property name="telegramHandler" ref="telegramHandler"/>
+        <property name="dataService" ref="dataService"/>
+    </bean>
 
-    <!--Activates various annotations to be detected in bean classes: Spring's @Required and @Autowired and so on-->
+    <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config/>
 
-    <!--Scanning components in base-package (look for annotations) -->
-    <context:component-scan base-package="ru.ifmo.quant"/>
+    <!-- @Transaction annotation support -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- Need for Repository abstraction -->
     <jpa:repositories base-package="ru.ifmo.quant.dao" entity-manager-factory-ref="entityManagerFactory"
                       transaction-manager-ref="transactionManager"/>
+
+    <!-- Need for TaskExecutor and TaskSheduler abstractions -->
+    <task:annotation-driven executor="executor" scheduler="scheduler"/>
+    <task:executor id="executor" pool-size="5"/>
+    <task:scheduler id="scheduler" pool-size="10"/>
+
+    <!-- Scanning components in base-package (look for annotations) -->
+    <context:component-scan base-package="ru.ifmo.quant"/>
 
     <context:property-placeholder location="*.properties"/>
 </beans>

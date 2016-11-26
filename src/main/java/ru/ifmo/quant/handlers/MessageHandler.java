@@ -9,7 +9,7 @@ import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.commands.TaskCreatingCommand;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
+import ru.ifmo.quant.executors.MessagesPool;
 
 /**
  * Created by andrey on 08.11.2016.
@@ -19,6 +19,7 @@ public class MessageHandler {
     private ProcessContainer processContainer;
     private DataService dataService;
     private CommandFactory commandFactory;
+    private MessagesPool messagesPool;
 
     public QuantMessage update(QuantMessage input) {
         AccountEntity accountEntity = dataService.findAccountEntity(input);
@@ -76,8 +77,9 @@ public class MessageHandler {
             }
         }
         output.setText(answer);
+        messagesPool.addToPool(output);
         return output;
-    };
+    }
 
     public ProcessContainer getProcessContainer() {
         return processContainer;
@@ -101,5 +103,13 @@ public class MessageHandler {
 
     public void setDataService(DataService dataService) {
         this.dataService = dataService;
+    }
+
+    public MessagesPool getSendingPool() {
+        return messagesPool;
+    }
+
+    public void setSendingPool(MessagesPool sendingPool) {
+        this.messagesPool = sendingPool;
     }
 }

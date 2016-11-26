@@ -2,10 +2,8 @@ package ru.ifmo.quant.handlers.telegram;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ifmo.quant.InputMessage;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.handlers.MessageHandler;
@@ -26,15 +24,7 @@ public class TelegramHandler extends TelegramLongPollingBot implements Initializ
 
     public void onUpdateReceived(Update update) {
         QuantMessage message = new InputMessage(update);
-        QuantMessage answer = messageHandler.update(message);
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(answer.getText());
-        sendMessage.setChatId(answer.getMessageAddress().getKey().toString());
-        try {
-            sendMessage(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        messageHandler.update(message);
     }
 
     public String getBotUsername() {

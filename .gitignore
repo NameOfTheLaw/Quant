@@ -1,6 +1,7 @@
 .idea/
 target/
 src/test/
+META-INF/
 src/main/java/ru/ifmo/quant/depricated
 src/main/java/ru/ifmo/quant/testclasses
 src/main/resources/telegram.properties

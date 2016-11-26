@@ -7,6 +7,7 @@ import ru.ifmo.quant.entity.AccountEntity;
 import ru.ifmo.quant.entity.NotificationEntity;
 import ru.ifmo.quant.entity.TaskEntity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class DataServiceImpl implements DataService {
     }
 
     public List<NotificationEntity> findNotificationEntity(Date serverDate, Long period) {
-        return notificationRepository.findByServerDate(serverDate, period);
+        return notificationRepository.findByServerDate(new Timestamp(serverDate.getTime()+period));
     }
 
     public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity) {
