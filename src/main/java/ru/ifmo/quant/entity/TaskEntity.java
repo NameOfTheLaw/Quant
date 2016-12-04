@@ -1,10 +1,13 @@
 package ru.ifmo.quant.entity;
 
-import org.hibernate.annotations.GenericGenerator;
+import ru.ifmo.quant.DateExtractor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * Created by andrey on 04.11.2016.
@@ -12,18 +15,20 @@ import java.util.List;
 @Entity
 @Table(name = "TASK")
 public class TaskEntity {
+
+    public final static int SPECIFIED_TIME = 1;
+    public final static int NO_SPECIFIED_TIME = 0;
+
     private Long id;
     private String title;
     private String body;
-    private Date clientDate;
-    private Date serverDate;
+    private Timestamp serverDate;
+    private int specifiedTime;
     private AccountEntity account;
     private List<NotificationEntity> notifications;
 
     @Id
     @Column(name = "ID")
-    //@GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "TASK_SEQ"))
-    //@GeneratedValue(generator = "generator")
     @SequenceGenerator(name = "generator", sequenceName = "TASK_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     public Long getId() {
@@ -55,24 +60,25 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "CLIENT_DATE")
-    public Date getClientDate() {
-        return clientDate;
-    }
-
-    public void setClientDate(Date clientDate) {
-        this.clientDate = clientDate;
-    }
-
-    @Basic
     @Column(name = "SERVER_DATE")
-    public Date getServerDate() {
+    public Timestamp getServerDate() {
         return serverDate;
     }
 
-    public void setServerDate(Date serverDate) {
+    public void setServerDate(Timestamp serverDate) {
         this.serverDate = serverDate;
     }
+
+    @Basic
+    @Column(name = "SPECIFIED_TIME")
+    public int getSpecifiedTime() {
+        return specifiedTime;
+    }
+
+    public void setSpecifiedTime(int specifiedTime) {
+        this.specifiedTime = specifiedTime;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -82,10 +88,9 @@ public class TaskEntity {
         TaskEntity that = (TaskEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (clientDate != null ? !clientDate.equals(that.clientDate) : that.clientDate != null) return false;
-        if (serverDate != null ? !serverDate.equals(that.serverDate) : that.serverDate != null) return false;
+        //if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        //if (body != null ? !body.equals(that.body) : that.body != null) return false;
+        //if (serverDate != null ? !serverDate.equals(that.serverDate) : that.serverDate != null) return false;
 
         return true;
     }
@@ -93,10 +98,10 @@ public class TaskEntity {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (body != null ? body.hashCode() : 0);
-        result = 31 * result + (clientDate != null ? clientDate.hashCode() : 0);
-        result = 31 * result + (serverDate != null ? serverDate.hashCode() : 0);
+        //result = 31 * result + (title != null ? title.hashCode() : 0);
+        //result = 31 * result + (body != null ? body.hashCode() : 0);
+        //result = 31 * result + (serverTime != null ? serverTime.hashCode() : 0);
+        //result = 31 * result + (serverDate != null ? serverDate.hashCode() : 0);
         return result;
     }
 
@@ -122,9 +127,32 @@ public class TaskEntity {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (getTitle() != null) stringBuilder.append(title+"\n");
         stringBuilder.append(getBody()+"\n");
-        stringBuilder.append(getClientDate().toString());
+        SimpleDateFormat sdf;
+        if (specifiedTime == SPECIFIED_TIME) {
+            sdf = new SimpleDateFormat("dd.MM.yy HH:mm");
+        } else {
+            sdf = new SimpleDateFormat("dd.MM.yy");
+        }
+
+        stringBuilder.append(sdf.format(getServerDate()));
+        /*
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(getServerDate());
+        stringBuilder.append(calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)+"."+calendar.get(calendar.YEAR));
+        if (specifiedTime == this.SPECIFIED_TIME) {
+            stringBuilder.append(" "+calendar.get(calendar.HOUR_OF_DAY)+":"+calendar.get(calendar.MINUTE));
+        }
+        */
         return stringBuilder.toString();
+    }
+
+    public void extractDate(DateExtractor dateExtractor) {
+        setServerDate(dateExtractor.getDate());
+        if (dateExtractor.isSpecifiedTime()) {
+            setSpecifiedTime(this.SPECIFIED_TIME);
+        } else {
+            setSpecifiedTime(this.NO_SPECIFIED_TIME);
+        }
     }
 }

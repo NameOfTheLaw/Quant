@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class InputMessage extends QuantMessage {
 
+    public InputMessage() {}
+
     public InputMessage(Update update) {
         setText(update.getMessage().getText());
         setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, update.getMessage().getChatId()));

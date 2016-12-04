@@ -7,15 +7,27 @@ import ru.ifmo.quant.entity.AccountEntity;
 import ru.ifmo.quant.entity.TaskEntity;
 import ru.ifmo.quant.exceptions.WrongContextCommandException;
 
+import java.sql.Date;
 import java.util.List;
 
 /**
  * Created by andrey on 09.11.2016.
  */
-public class TodayCommand implements QuantCommand {
+public class TodayCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
+    public String perform(QuantMessage input, HandlingProcess process) {
         //TODO: realise perform method
-        return "TODAY_TEMPLATE";
+        List<TaskEntity> taskEntities = dataService.findTaskEntity(new Date(System.currentTimeMillis()), 1000l * 60 * 60 * 24, process.getAccountEntity());
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (taskEntities.isEmpty()) {
+            stringBuilder.append(ctx.getMessage("command.today.empty", null, input.getLocale()));
+        } else {
+            stringBuilder.append(ctx.getMessage("command.today.intro", null, input.getLocale()));
+            for (TaskEntity taskEntity : taskEntities) {
+                stringBuilder.append(">" + taskEntity + "\n");
+            }
+        }
+        return stringBuilder.toString();
     }
 }

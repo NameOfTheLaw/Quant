@@ -1,37 +1,33 @@
 package ru.ifmo.quant;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.commands.*;
 
 /**
  * Created by andrey on 08.11.2016.
  */
 public enum HandleState {
-    CONFIRMATION_NOTIFICATION(null, NotificationConfirmationCommand.class),
-    CREATING_NOTIFICATION(CONFIRMATION_NOTIFICATION, NotificationCreatingCommand.class),
-    CONFIRMATION_TASK(CREATING_NOTIFICATION, TaskConfirmationCommand.class),
-    CREATING_TASK(CONFIRMATION_TASK, TaskCreatingCommand.class);
+    //TODO: REMOVE ENUMERATIONS AND ADD STATE CLASSES
+    CONFIRMATION_NOTIFICATION("notificationConfirmationCommand"),
+    CREATING_NOTIFICATION("notificationCreatingCommand"),
+    CONFIRMATION_TASK("taskConfirmationCommand"),
+    CREATING_TASK("taskCreatingCommand");
 
-    private HandleState nextState;
-    private Class commandClass;
+    private String commandAlias;
 
-    HandleState(HandleState nextState, Class commandClass) {
-        this.nextState = nextState;
-        this.commandClass = commandClass;
+    HandleState(String commandAlias) {
+        this.commandAlias = commandAlias;
     }
 
-    public HandleState getNextState() {
-        return nextState;
-    }
-
-    public void setNextState(HandleState nextState) {
-        this.nextState = nextState;
-    }
-
-    public QuantCommand getCommand() throws IllegalAccessException, InstantiationException {
-        if (commandClass!=null) {
-            return (QuantCommand) commandClass.newInstance();
+    public QuantCommand getCommand(ApplicationContext ctx) {
+        if (commandAlias!=null) {
+            //TODO: CTX IS NULL HERE
+            return ctx.getBean(commandAlias, QuantCommand.class);
         } else {
             throw new NullPointerException();
         }
     }
+
 }

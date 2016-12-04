@@ -28,7 +28,7 @@ public interface DataService {
 
     public TaskEntity findTaskEntity(Long id);
     public List<TaskEntity> findTaskEntity(AccountEntity accountEntity);
-    public List<TaskEntity> findTaskEntity(Date serverDate, Long period);
+    public List<TaskEntity> findTaskEntity(Date serverDate, Long period, AccountEntity accountEntity);
     public TaskEntity save(TaskEntity entity);
     public void delete(TaskEntity entity);
 

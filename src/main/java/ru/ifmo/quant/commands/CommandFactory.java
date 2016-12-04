@@ -1,6 +1,9 @@
 package ru.ifmo.quant.commands;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -10,37 +13,33 @@ import java.util.Properties;
 /**
  * Created by andrey on 09.11.2016.
  */
-public class CommandFactory implements InitializingBean {
+public class CommandFactory implements InitializingBean, ApplicationContextAware {
 
     private Properties commands;
-    private Map<String,Class> commandMap;
+    private Map<String,String> commandMap;
+    private ApplicationContext ctx;
 
     public void afterPropertiesSet() throws Exception {
         Enumeration enumeration = commands.propertyNames();
-        commandMap = new HashMap<String, Class>();
+        commandMap = new HashMap<String, String>();
         while (enumeration.hasMoreElements()) {
             String alias = (String) enumeration.nextElement();
-            try {
-                Class classObject = Class.forName(commands.getProperty(alias));
-                commandMap.put(alias, classObject);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            commandMap.put(alias, commands.getProperty(alias));
         }
         commands.clear();
     }
 
-    //TODO: realise "Strategy" pattern
     public QuantCommand build(String body) {
         if (body != null) {
             String alias = body.replaceAll("\\s+", " ").trim().toLowerCase();
+            String beanName = commandMap.get(alias);
             QuantCommand command = null;
-            try {
-                command = (QuantCommand) commandMap.get(alias).newInstance();
-            } catch (NullPointerException e) {
-                //ignore. it's ok. all goes as planned
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (beanName != null) {
+                try {
+                    command = ctx.getBean(commandMap.get(alias), QuantCommand.class);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
             }
             return command;
         } else {
@@ -54,5 +53,13 @@ public class CommandFactory implements InitializingBean {
 
     public void setCommands(Properties commands) {
         this.commands = commands;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.ctx = applicationContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return ctx;
     }
 }

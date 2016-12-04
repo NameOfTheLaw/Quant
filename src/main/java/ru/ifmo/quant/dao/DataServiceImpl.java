@@ -77,8 +77,8 @@ public class DataServiceImpl implements DataService {
         return taskRepository.findByAccount(accountEntity);
     }
 
-    public List<TaskEntity> findTaskEntity(Date serverDate, Long period) {
-        return taskRepository.findByServerDate(serverDate, period);
+    public List<TaskEntity> findTaskEntity(Date serverDate, Long period, AccountEntity accountEntity) {
+        return taskRepository.findByServerDateAndAccount_Id(new Timestamp(serverDate.getTime()+period), accountEntity.getId());
     }
 
     public TaskEntity save(TaskEntity entity) {

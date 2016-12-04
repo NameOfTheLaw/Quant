@@ -7,36 +7,33 @@ import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.entity.AccountEntity;
 import ru.ifmo.quant.entity.TaskEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
 
-import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by andrey on 21.11.2016.
  */
-public class TaskCreatingCommand implements QuantCommand {
+public class TaskCreatingCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
+    public String perform(QuantMessage input, HandlingProcess process) {
         String rawText = input.getText();
         DateExtractor dateExtractor = new DateExtractor(rawText);
-        Date date = dateExtractor.getDate();
         TaskEntity taskEntity = new TaskEntity();
-        taskEntity.setAccount(account);
+        taskEntity.setAccount(process.getAccountEntity());
         taskEntity.setBody(dateExtractor.getText());
-        String answer = controlFlow(date, taskEntity, process, dataService);
+        String answer = controlFlow(input, dateExtractor, taskEntity, process, dataService);
         return answer;
     }
 
-    protected String controlFlow(Date date, TaskEntity taskEntity, HandlingProcess process, DataService dataService) {
+    protected String controlFlow(QuantMessage input, DateExtractor dateExtractor, TaskEntity taskEntity, HandlingProcess process, DataService dataService) {
         String answer;
-        if (date != null) {
-            taskEntity.setServerDate(date);
-            taskEntity.setClientDate(date);
+        if (dateExtractor.isCorrect()) {
+            taskEntity.extractDate(dateExtractor);
             taskEntity = dataService.save(taskEntity);
-            answer = "Ok. Do you want me to set notice? Just tell me time or ignore me";
+            answer = ctx.getMessage("command.task.create.successful", null, input.getLocale());
             process.setHandleState(HandleState.CREATING_NOTIFICATION);
         } else {
-            answer = "To finish creating task below pls write date \""+taskEntity.getBody()+"...\".\nOr ignore me if something went wrong";
+            answer = ctx.getMessage("command.task.create.confirmation", new Object[]{taskEntity.getBody()}, input.getLocale());
             process.setHandleState(HandleState.CONFIRMATION_TASK);
         }
         process.setParameter("new-task", taskEntity);

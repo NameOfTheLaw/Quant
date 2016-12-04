@@ -11,11 +11,11 @@ import ru.ifmo.quant.exceptions.WrongContextCommandException;
 /**
  * Created by andrey on 22.11.2016.
  */
-public class CancelCommand implements QuantCommand {
+public class CancelCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
-        process.removeHandleState();
-        String answer = "Okay. Nothing happend";
+    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+        handlingProcess.removeHandleState();
+        String answer = ctx.getMessage("command.cancel", null, input.getLocale());
         return answer;
     }
 }

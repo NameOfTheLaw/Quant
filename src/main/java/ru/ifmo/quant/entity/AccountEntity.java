@@ -5,6 +5,7 @@ import ru.ifmo.quant.MessageAddress;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by andrey on 04.11.2016.
@@ -19,8 +20,6 @@ public class AccountEntity {
 
     @Id
     @Column(name = "ID")
-    //@GenericGenerator(name = "generator", strategy = "sequence-identity", parameters = @org.hibernate.annotations.Parameter(name = "sequence", value = "ACCOUNT_SEQ"))
-    //@GeneratedValue(generator = "generator")
     @SequenceGenerator(name = "generator", sequenceName = "ACCOUNT_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     public Long getId() {
@@ -90,4 +89,5 @@ public class AccountEntity {
             setVkKey(messageAddress.getKey());
         }
     }
+
 }

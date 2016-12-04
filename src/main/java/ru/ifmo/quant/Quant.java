@@ -19,6 +19,7 @@ public class Quant {
     public static void main(String[] args) {
         GenericXmlApplicationContext ctx = new GenericXmlApplicationContext("app-context.xml");
 
+        //TODO: use TDD JUnit
         /*
         PrettyTimeParser ptp = new PrettyTimeParser();
         String rawBody = "Next Thursday aT    18 meeting with      Clara            ";

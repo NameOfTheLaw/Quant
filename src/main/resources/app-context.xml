@@ -69,6 +69,23 @@
         <property name="dataService" ref="dataService"/>
     </bean>
 
+    <bean id="defaultCommand" class="ru.ifmo.quant.commands.QuantCommand" lazy-init="true" scope="prototype" abstract="true"/>
+    <bean id="startCommand" class="ru.ifmo.quant.commands.StartCommand" parent="defaultCommand"/>
+    <bean id="todayCommand" class="ru.ifmo.quant.commands.TodayCommand" parent="defaultCommand"/>
+    <bean id="weekCommand" class="ru.ifmo.quant.commands.WeekCommand" parent="defaultCommand"/>
+    <bean id="allTasksCommand" class="ru.ifmo.quant.commands.AllTasksCommand" parent="defaultCommand"/>
+    <bean id="preTaskCreatingCommand" class="ru.ifmo.quant.commands.PreTaskCreatingCommand" parent="defaultCommand"/>
+    <bean id="taskCreatingCommand" class="ru.ifmo.quant.commands.TaskCreatingCommand" parent="defaultCommand"/>
+    <bean id="taskConfirmationCommand" class="ru.ifmo.quant.commands.TaskConfirmationCommand" parent="defaultCommand"/>
+    <bean id="notificationCreatingCommand" class="ru.ifmo.quant.commands.NotificationCreatingCommand" parent="defaultCommand"/>
+    <bean id="notificationConfirmationCommand" class="ru.ifmo.quant.commands.NotificationConfirmationCommand" parent="defaultCommand"/>
+    <bean id="cancelCommand" class="ru.ifmo.quant.commands.CancelCommand" parent="defaultCommand"/>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="locale/messages"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
     <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config/>
 

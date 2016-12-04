@@ -1,11 +1,9 @@
 package ru.ifmo.quant.handlers;
 
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.OutputMessage;
-import ru.ifmo.quant.ProcessContainer;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.CommandFactory;
 import ru.ifmo.quant.commands.QuantCommand;
+import ru.ifmo.quant.commands.StartCommand;
 import ru.ifmo.quant.commands.TaskCreatingCommand;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.entity.AccountEntity;
@@ -23,57 +21,63 @@ public class MessageHandler {
 
     public QuantMessage update(QuantMessage input) {
         AccountEntity accountEntity = dataService.findAccountEntity(input);
+        if (accountEntity == null) {
+            accountEntity = new AccountEntity();
+            accountEntity.insertKey(input.getMessageAddress());
+            accountEntity = dataService.save(accountEntity);
+            QuantCommand command = new StartCommand();
+            command.perform(input, null);
+        }
         QuantMessage output = new OutputMessage();
         output.setMessageAddress(input.getMessageAddress());
         HandlingProcess process = processContainer.getProcess(accountEntity);
-        //TODO: optimise the message handle process
         QuantCommand command = null;
-        try {
-            command = commandFactory.build(input.getText());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        if (process == null) {
-            process = new HandlingProcess(null, accountEntity);
-            processContainer.addProcess(process);
-        }
-        String answer;
-        if (command != null) {
-            //Killing active process state
-            if (process.getHandleState() != null) process.removeHandleState();
-            //Starting process
+        String answer = "Plz send me text";
+        if (input.getText() != null) {
             try {
-                answer = command.perform(input, accountEntity, process, dataService);
+                command = commandFactory.build(input.getText());
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                answer = "I don't know how to process this right now";
-                process.removeHandleState();
-            } catch (Exception e) {
-                e.printStackTrace();
-                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
             }
-        } else if (process.getHandleState() != null) {
-            //Continue process
-            try {
-                command = process.getHandleState().getCommand();
-                answer = command.perform(input, accountEntity, process, dataService);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                answer = "I don't know how to process this right now";
-                process.removeHandleState();
-            } catch (Exception e) {
-                e.printStackTrace();
-                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+            if (process == null) {
+                process = new HandlingProcess(null, accountEntity);
+                processContainer.addProcess(process);
             }
-        } else {
-            //answer = "I don't know that command!";
-            //TODO: fix bug below
-            command = new TaskCreatingCommand();
-            try {
-                answer = command.perform(input, accountEntity, process, dataService);
-            } catch (Exception e) {
-                e.printStackTrace();
-                answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+            if (command != null) {
+                //Killing active process state
+                if (process.getHandleState() != null) process.removeHandleState();
+                //Starting process
+                try {
+                    answer = command.perform(input, process);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    answer = "I don't know how to process this right now";
+                    process.removeHandleState();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+                }
+            } else if (process.getHandleState() != null) {
+                //Continue process
+                try {
+                    command = process.getHandleState().getCommand(commandFactory.getApplicationContext());
+                    answer = command.perform(input, process);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    answer = "I don't know how to process this right now";
+                    process.removeHandleState();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+                }
+            } else {
+                command = new TaskCreatingCommand();
+                try {
+                    answer = command.perform(input, process);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    answer = "Some errors happend in my mind. Please repeat maybe i'll be ok";
+                }
             }
         }
         output.setText(answer);

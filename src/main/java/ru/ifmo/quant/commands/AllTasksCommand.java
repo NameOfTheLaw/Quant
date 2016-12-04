@@ -12,11 +12,10 @@ import java.util.List;
 /**
  * Created by andrey on 09.11.2016.
  */
-public class AllTasksCommand implements QuantCommand {
+public class AllTasksCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, AccountEntity account, HandlingProcess process, DataService dataService) {
-        //TODO: realise perform method
-        List<TaskEntity> tasks = dataService.findTaskEntity(account);
+    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+        List<TaskEntity> tasks = dataService.findTaskEntity(handlingProcess.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
         for (TaskEntity task: tasks) {
             stringBuilder.append("> "+task.toString()+"\n");

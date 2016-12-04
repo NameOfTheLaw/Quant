@@ -24,7 +24,8 @@ public class MessagesPool {
 
     private static final int MESSAGES_POOL_REFRESHING_TIME = 200;
     private static final int MESSAGES_POOL_SIZE = 6;
-    private static final int NOTIFICATION_GET_TIME = 2000;
+    private static final int NOTIFICATION_GET_TIME = 1000;
+    private static final Long NOTIFICATION_LOAD_PERIOD = 2000l;
     private Queue<QuantMessage> messagesPool = new PriorityQueue<QuantMessage>();
     private TelegramHandler telegramHandler;
     private DataService dataService;
@@ -42,19 +43,17 @@ public class MessagesPool {
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            } else if (message.getMessageAddress().getSocial().equals(MessageAddress.VK_ALIAS)) {
-                //SEND TO VK.COM
             }
         }
     }
 
     @Scheduled(fixedRate = NOTIFICATION_GET_TIME)
     public void addNotificationMessagesToPool () {
-        List<NotificationEntity> notifications = dataService.findNotificationEntity(new Timestamp(System.currentTimeMillis()), 100000000l);
+        List<NotificationEntity> notifications = dataService.findNotificationEntity(new Timestamp(System.currentTimeMillis()), NOTIFICATION_LOAD_PERIOD);
         if (notifications!=null) {
             for (NotificationEntity entity: notifications) {
                 QuantMessage message = new OutputMessage();
-                message.setText("Notice you about \""+entity.getTask().getBody()+"\"\non "+entity.getTask().getClientDate());
+                message.setText("Notice you about "+entity.getTask());
                 message.setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, entity.getTask().getAccount().getTelegramKey()));
                 dataService.delete(entity);
                 addToPool(message);
