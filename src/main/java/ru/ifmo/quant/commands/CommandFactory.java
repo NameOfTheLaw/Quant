@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * CommandFactory realisation based on properties file
+ *
  * Created by andrey on 09.11.2016.
  */
 public class CommandFactory implements InitializingBean, ApplicationContextAware {

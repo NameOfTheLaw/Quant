@@ -64,12 +64,14 @@
         <property name="messageHandler" ref="messageHandler"/>
     </bean>
 
-    <bean id="SendingPool" class="ru.ifmo.quant.executors.MessagesPool">
+    <bean id="SendingPool" class="ru.ifmo.quant.MessagesPool">
         <property name="telegramHandler" ref="telegramHandler"/>
         <property name="dataService" ref="dataService"/>
     </bean>
 
-    <bean id="defaultCommand" class="ru.ifmo.quant.commands.QuantCommand" lazy-init="true" scope="prototype" abstract="true"/>
+    <!-- QuantCommands below -->
+    <!--
+    <bean id="defaultCommand" class="ru.ifmo.quant.commands.QuantCommand" scope="prototype" abstract="true"/>
     <bean id="startCommand" class="ru.ifmo.quant.commands.StartCommand" parent="defaultCommand"/>
     <bean id="todayCommand" class="ru.ifmo.quant.commands.TodayCommand" parent="defaultCommand"/>
     <bean id="weekCommand" class="ru.ifmo.quant.commands.WeekCommand" parent="defaultCommand"/>
@@ -80,10 +82,30 @@
     <bean id="notificationCreatingCommand" class="ru.ifmo.quant.commands.NotificationCreatingCommand" parent="defaultCommand"/>
     <bean id="notificationConfirmationCommand" class="ru.ifmo.quant.commands.NotificationConfirmationCommand" parent="defaultCommand"/>
     <bean id="cancelCommand" class="ru.ifmo.quant.commands.CancelCommand" parent="defaultCommand"/>
+    -->
 
+    <!-- MessageSource (for locale messages) -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="locale/messages"/>
         <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <!-- HandlingState and CommandExtractors-->
+    <bean id="handingState" class="ru.ifmo.quant.HandlingState" scope="prototype">
+        <property name="commandExtractor" ref="defaultExtractor"/>
+    </bean>
+
+    <!--
+    <bean id="defaultExtractor" class="ru.ifmo.quant.commands.extractors.DefaultExtractor"/>
+    <bean id="taskCreatingExtractor" class="ru.ifmo.quant.commands.extractors.TaskCreatingExtractor"/>
+    <bean id="taskConfirmationExtractor" class="ru.ifmo.quant.commands.extractors.TaskConfirmationExtractor"/>
+    <bean id="notificationCreatingExtractor" class="ru.ifmo.quant.commands.extractors.NotificationCreatingExtractor"/>
+    <bean id="notificationConfirmationExtractor" class="ru.ifmo.quant.commands.extractors.NotificationConfirmationExtractor"/>
+    -->
+
+    <!-- HandlingProcess with defaultState-->
+    <bean id="handlingProcess" class="ru.ifmo.quant.HandlingProcess" scope="prototype">
+        <property name="handlingState" ref="handingState"/>
     </bean>
 
     <!-- Activates various annotations to be detected in bean classes -->

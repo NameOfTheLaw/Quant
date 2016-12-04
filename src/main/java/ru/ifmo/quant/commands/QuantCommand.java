@@ -22,6 +22,6 @@ public abstract class QuantCommand implements ApplicationContextAware {
     public abstract String perform(QuantMessage input, HandlingProcess handlingProcess);
 
     public void setApplicationContext(ApplicationContext applicationContext) {
-        ctx = applicationContext;
+        this.ctx = applicationContext;
     }
 }

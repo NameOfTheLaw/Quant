@@ -1,4 +1,4 @@
-package ru.ifmo.quant.executors;
+package ru.ifmo.quant;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.api.methods.send.SendMessage;

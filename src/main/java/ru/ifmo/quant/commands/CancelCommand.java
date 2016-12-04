@@ -1,20 +1,20 @@
 package ru.ifmo.quant.commands;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.ProcessContainer;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
+import ru.ifmo.quant.HandlingState;
 
 /**
  * Created by andrey on 22.11.2016.
  */
+@Component
+@Scope("prototype")
 public class CancelCommand extends QuantCommand {
 
     public String perform(QuantMessage input, HandlingProcess handlingProcess) {
-        handlingProcess.removeHandleState();
+        handlingProcess.changeState(HandlingState.DEFAULT);
         String answer = ctx.getMessage("command.cancel", null, input.getLocale());
         return answer;
     }
