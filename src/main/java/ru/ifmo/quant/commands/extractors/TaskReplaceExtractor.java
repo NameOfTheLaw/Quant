@@ -5,14 +5,12 @@ import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
 
 /**
- * Created by andrey on 04.12.2016.
+ * Created by andrey on 07.12.2016.
  */
 @Component
-public class TaskCreatingExtractor extends CommandExtractor {
+public class TaskReplaceExtractor extends CommandExtractor {
 
     public QuantCommand extract(QuantMessage message) {
-        //TODO: realise method
-        QuantCommand command = ctx.getBean("taskCreatingCommand", QuantCommand.class);
-        return command;
+        return ctx.getBean("taskReplaceCommand", QuantCommand.class);
     }
 }

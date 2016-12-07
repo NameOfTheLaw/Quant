@@ -1,12 +1,11 @@
-package ru.ifmo.quant.commands;
+package ru.ifmo.quant.commands.confirm;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.DateExtractor;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
+import ru.ifmo.quant.commands.create.TaskCreatingCommand;
 import ru.ifmo.quant.entity.TaskEntity;
 
 /**

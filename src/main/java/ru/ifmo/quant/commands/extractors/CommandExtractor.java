@@ -3,6 +3,7 @@ package ru.ifmo.quant.commands.extractors;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
 
 /**
@@ -12,7 +13,7 @@ public abstract class CommandExtractor implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
 
-    public abstract QuantCommand extract(String string);
+    public abstract QuantCommand extract(QuantMessage message);
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;

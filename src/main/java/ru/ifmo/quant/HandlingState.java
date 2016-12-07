@@ -12,22 +12,24 @@ import ru.ifmo.quant.commands.QuantCommand;
  */
 public class HandlingState implements ApplicationContextAware {
 
-    public static final String DEFAULT="defaultExtractor";
-    public static final String TASK_CREATING="taskCreatingExtractor";
-    public static final String TASK_CONFIRMATION="taskConfirmationExtractor";
-    public static final String NOTIFICATION_CREATING="notificationCreatingExtractor";
-    public static final String NOTIFICATION_CONFIRMATION="notificationConfirmationExtractor";
+    public static final String DEFAULT = "defaultExtractor";
+    public static final String TASK_CREATING = "taskCreatingExtractor";
+    public static final String TASK_CONFIRMATION = "taskConfirmationExtractor";
+    public static final String NOTIFICATION_CREATING = "notificationCreatingExtractor";
+    public static final String NOTIFICATION_CONFIRMATION = "notificationConfirmationExtractor";
+    public static final String EDIT = "editExtractor";
+    public static final String TASK_EDIT ="taskEditExtractor";
+    public static final String TASK_PARAMETERS_EDIT = "taskParametersEditExtractor";
+    public static final String TASK_REPLACE = "taskReplaceExtractor";
+    public static final String TASK_BODY_EDIT = "taskBodyEditExtractor";
+    public static final String TASK_TIME_EDIT = "taskTimeEditExtractor";
 
     private ApplicationContext ctx;
     private CommandExtractor commandExtractor;
 
     public QuantCommand extractCommand(QuantMessage message) {
         String text = message.getText();
-        QuantCommand quantCommand = commandExtractor.extract(text);
-        if (quantCommand == null) {
-            changeExtractor(DEFAULT);
-            quantCommand = commandExtractor.extract(text);
-        }
+        QuantCommand quantCommand = commandExtractor.extract(message);
         return quantCommand;
     }
 

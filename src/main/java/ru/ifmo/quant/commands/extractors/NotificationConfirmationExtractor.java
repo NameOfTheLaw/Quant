@@ -1,7 +1,7 @@
 package ru.ifmo.quant.commands.extractors;
 
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.commands.NotificationConfirmationCommand;
+import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
 
 /**
@@ -9,7 +9,8 @@ import ru.ifmo.quant.commands.QuantCommand;
  */
 @Component
 public class NotificationConfirmationExtractor extends CommandExtractor {
-    public QuantCommand extract(String string) {
+
+    public QuantCommand extract(QuantMessage message) {
         //TODO: realise method
         QuantCommand command = ctx.getBean("notificationConfirmationCommand", QuantCommand.class);
         return command;

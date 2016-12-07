@@ -10,6 +10,9 @@ import java.util.HashMap;
  */
 public class HandlingProcess implements InitializingBean {
 
+    public static final String TASKS_LIST = "tasks-list";
+    public static final String TASK = "task";
+
     private HandlingState handlingState;
     private AccountEntity accountEntity;
     private HashMap<String,Object> processParameters;
@@ -54,6 +57,10 @@ public class HandlingProcess implements InitializingBean {
 
     public <K> K getParameter(String name, Class<K> className) {
         return (K) processParameters.get(name);
+    }
+
+    public Object getParameter(String name) {
+        return processParameters.get(name);
     }
 
     public void clearParameters() {

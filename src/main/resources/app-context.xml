@@ -76,11 +76,11 @@
     <bean id="todayCommand" class="ru.ifmo.quant.commands.TodayCommand" parent="defaultCommand"/>
     <bean id="weekCommand" class="ru.ifmo.quant.commands.WeekCommand" parent="defaultCommand"/>
     <bean id="allTasksCommand" class="ru.ifmo.quant.commands.AllTasksCommand" parent="defaultCommand"/>
-    <bean id="preTaskCreatingCommand" class="ru.ifmo.quant.commands.PreTaskCreatingCommand" parent="defaultCommand"/>
-    <bean id="taskCreatingCommand" class="ru.ifmo.quant.commands.TaskCreatingCommand" parent="defaultCommand"/>
-    <bean id="taskConfirmationCommand" class="ru.ifmo.quant.commands.TaskConfirmationCommand" parent="defaultCommand"/>
-    <bean id="notificationCreatingCommand" class="ru.ifmo.quant.commands.NotificationCreatingCommand" parent="defaultCommand"/>
-    <bean id="notificationConfirmationCommand" class="ru.ifmo.quant.commands.NotificationConfirmationCommand" parent="defaultCommand"/>
+    <bean id="preTaskCreatingCommand" class="ru.ifmo.quant.commands.createreTaskCreatingCommand" parent="defaultCommand"/>
+    <bean id="taskCreatingCommand" class="ru.ifmo.quant.commands.createaskCreatingCommand" parent="defaultCommand"/>
+    <bean id="taskConfirmationCommand" class="ru.ifmo.quant.commands.confirm.TaskConfirmationCommand" parent="defaultCommand"/>
+    <bean id="notificationCreatingCommand" class="ru.ifmo.quant.commands.createotificationCreatingCommand" parent="defaultCommand"/>
+    <bean id="notificationConfirmationCommand" class="ru.ifmo.quant.commands.confirm.NotificationConfirmationCommand" parent="defaultCommand"/>
     <bean id="cancelCommand" class="ru.ifmo.quant.commands.CancelCommand" parent="defaultCommand"/>
     -->
 

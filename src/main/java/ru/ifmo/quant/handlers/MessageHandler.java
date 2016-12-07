@@ -40,7 +40,15 @@ public class MessageHandler implements ApplicationContextAware {
             processContainer.addProcess(process);
         }
         QuantCommand command = process.getHandlingState().extractCommand(input);
-        String answer = command.perform(input, process);
+        String answer = null;
+        try {
+            answer = command.perform(input, process);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        if (answer == null) {
+            answer = ctx.getMessage("error", null, input.getLocale());
+        }
         output.setText(answer);
         messagesPool.addToPool(output);
         return output;
