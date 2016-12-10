@@ -3,8 +3,8 @@ package ru.ifmo.quant.dao;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import ru.ifmo.quant.entity.NotificationEntity;
-import ru.ifmo.quant.entity.TaskEntity;
+import ru.ifmo.quant.entities.NotificationEntity;
+import ru.ifmo.quant.entities.TaskEntity;
 
 import java.util.Date;
 import java.util.List;

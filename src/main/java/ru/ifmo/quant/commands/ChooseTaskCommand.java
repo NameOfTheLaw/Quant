@@ -2,12 +2,12 @@ package ru.ifmo.quant.commands;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.DateExtractor;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.HandlingState;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.commands.QuantCommand;
-import ru.ifmo.quant.entity.TaskEntity;
+import ru.ifmo.quant.entities.TaskEntity;
+import ru.ifmo.quant.exceptions.BadCommandReturnException;
+import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
 import java.util.List;
 
@@ -47,9 +47,21 @@ public class ChooseTaskCommand extends QuantCommand {
                     e.printStackTrace();
                 }
                 if (task != null) {
-                    stringBuilder.append(ctx.getMessage("command.edittask.change", null, input.getLocale()));
                     handlingProcess.setParameter(HandlingProcess.TASK, task);
-                    handlingProcess.changeState(HandlingState.CHOOSE_TASK_PARAMETER);
+                    if (isAfterState()) {
+                        handlingProcess.changeState(getAfterState());
+                        try {
+                            stringBuilder.append(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
+                        } catch (BadCommandReturnException e) {
+                            e.printStackTrace();
+                        } catch (NullCommandArgumentException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        stringBuilder.append(ctx.getMessage("command.edittask.change", null, input.getLocale()));
+                        handlingProcess.setParameter(HandlingProcess.TASK, task);
+                        handlingProcess.changeState(HandlingState.CHOOSE_TASK_PARAMETER);
+                    }
                 } else {
                     stringBuilder.append(ctx.getMessage("command.edittask.outoftasksindex", null, input.getLocale()));
                 }

@@ -1,7 +1,7 @@
 package ru.ifmo.quant;
 
 import org.springframework.beans.factory.InitializingBean;
-import ru.ifmo.quant.entity.AccountEntity;
+import ru.ifmo.quant.entities.AccountEntity;
 
 import java.util.HashMap;
 
@@ -12,6 +12,7 @@ public class HandlingProcess implements InitializingBean {
 
     public static final String TASKS_LIST = "tasks-list";
     public static final String TASK = "task";
+    public static final String NOTIFICATION = "notification";
 
     private HandlingState handlingState;
     private AccountEntity accountEntity;

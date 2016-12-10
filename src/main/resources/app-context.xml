@@ -7,12 +7,14 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${driverClassName}"/>
@@ -52,7 +54,7 @@
         <property name="processContainer" ref="processContainer"/>
         <property name="dataService" ref="dataService"/>
         <property name="commandFactory" ref="commandFactory"/>
-        <property name="sendingPool" ref="SendingPool"/>
+        <property name="sendingPool" ref="sendingPool"/>
     </bean>
 
     <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
@@ -64,25 +66,10 @@
         <property name="messageHandler" ref="messageHandler"/>
     </bean>
 
-    <bean id="SendingPool" class="ru.ifmo.quant.MessagesPool">
+    <bean id="sendingPool" class="ru.ifmo.quant.MessagesPool">
         <property name="telegramHandler" ref="telegramHandler"/>
         <property name="dataService" ref="dataService"/>
     </bean>
-
-    <!-- QuantCommands below -->
-    <!--
-    <bean id="defaultCommand" class="ru.ifmo.quant.commands.QuantCommand" scope="prototype" abstract="true"/>
-    <bean id="startCommand" class="ru.ifmo.quant.commands.StartCommand" parent="defaultCommand"/>
-    <bean id="todayCommand" class="ru.ifmo.quant.commands.TodayCommand" parent="defaultCommand"/>
-    <bean id="weekCommand" class="ru.ifmo.quant.commands.WeekCommand" parent="defaultCommand"/>
-    <bean id="allTasksCommand" class="ru.ifmo.quant.commands.AllTasksCommand" parent="defaultCommand"/>
-    <bean id="preTaskCreatingCommand" class="ru.ifmo.quant.commands.createreTaskCreatingCommand" parent="defaultCommand"/>
-    <bean id="taskCreatingCommand" class="ru.ifmo.quant.commands.createaskCreatingCommand" parent="defaultCommand"/>
-    <bean id="taskConfirmationCommand" class="ru.ifmo.quant.commands.confirm.TaskConfirmationCommand" parent="defaultCommand"/>
-    <bean id="notificationCreatingCommand" class="ru.ifmo.quant.commands.createotificationCreatingCommand" parent="defaultCommand"/>
-    <bean id="notificationConfirmationCommand" class="ru.ifmo.quant.commands.confirm.NotificationConfirmationCommand" parent="defaultCommand"/>
-    <bean id="cancelCommand" class="ru.ifmo.quant.commands.CancelCommand" parent="defaultCommand"/>
-    -->
 
     <!-- MessageSource (for locale messages) -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -95,18 +82,16 @@
         <property name="commandExtractor" ref="defaultExtractor"/>
     </bean>
 
-    <!--
-    <bean id="defaultExtractor" class="ru.ifmo.quant.commands.extractors.DefaultExtractor"/>
-    <bean id="taskCreatingExtractor" class="ru.ifmo.quant.commands.extractors.TaskCreatingExtractor"/>
-    <bean id="taskConfirmationExtractor" class="ru.ifmo.quant.commands.extractors.TaskConfirmationExtractor"/>
-    <bean id="notificationCreatingExtractor" class="ru.ifmo.quant.commands.extractors.NotificationCreatingExtractor"/>
-    <bean id="notificationConfirmationExtractor" class="ru.ifmo.quant.commands.extractors.NotificationConfirmationExtractor"/>
-    -->
-
     <!-- HandlingProcess with defaultState-->
     <bean id="handlingProcess" class="ru.ifmo.quant.HandlingProcess" scope="prototype">
         <property name="handlingState" ref="handingState"/>
     </bean>
+
+    <!-- CommandAspect declaration -->
+    <bean id="commandAspect" class="ru.ifmo.quant.aspects.CommandAspect"/>
+
+    <!-- Activates aop autoproxy -->
+	<aop:aspectj-autoproxy />
 
     <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config/>

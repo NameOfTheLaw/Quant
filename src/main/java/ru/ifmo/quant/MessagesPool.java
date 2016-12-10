@@ -3,13 +3,8 @@ package ru.ifmo.quant;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ifmo.quant.MessageAddress;
-import ru.ifmo.quant.OutputMessage;
-import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.NotificationEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
-import ru.ifmo.quant.exceptions.WrongContextException;
+import ru.ifmo.quant.entities.NotificationEntity;
 import ru.ifmo.quant.handlers.telegram.TelegramHandler;
 
 import java.sql.Timestamp;
@@ -38,6 +33,7 @@ public class MessagesPool {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setText(message.getText());
                 sendMessage.setChatId(message.getMessageAddress().getKey().toString());
+                sendMessage.enableMarkdown(true);
                 try {
                     telegramHandler.sendMessage(sendMessage);
                 } catch (TelegramApiException e) {

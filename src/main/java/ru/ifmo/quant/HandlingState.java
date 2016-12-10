@@ -6,28 +6,30 @@ import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.commands.extractors.CommandExtractor;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
+import ru.ifmo.quant.exceptions.NoSuchCommandException;
 
 /**
  * Created by andrey on 04.12.2016.
  */
 public class HandlingState implements ApplicationContextAware {
 
-    public static final String DEFAULT = "defaultExtractor";
-    public static final String TASK_CREATING = "taskCreatingExtractor";
-    public static final String TASK_CONFIRMATION = "taskConfirmationExtractor";
-    public static final String NOTIFICATION_CREATING = "notificationCreatingExtractor";
-    public static final String NOTIFICATION_CONFIRMATION = "notificationConfirmationExtractor";
-    public static final String EDIT = "editExtractor";
-    public static final String TASK_EDIT ="taskEditExtractor";
-    public static final String TASK_PARAMETERS_EDIT = "taskParametersEditExtractor";
-    public static final String TASK_REPLACE = "taskReplaceExtractor";
-    public static final String TASK_BODY_EDIT = "taskBodyEditExtractor";
-    public static final String TASK_TIME_EDIT = "taskTimeEditExtractor";
+    public static final String DEFAULT = "default";
+    public static final String TASK_CREATING = "taskCreating";
+    public static final String TASK_CONFIRMATION = "taskConfirmation";
+    public static final String NOTIFICATION_CREATING = "notificationCreating";
+    public static final String NOTIFICATION_CONFIRMATION = "notificationConfirmation";
+    public static final String EDIT = "edit";
+    public static final String TASK_EDIT ="taskEdit";
+    public static final String CHOOSE_TASK_PARAMETER = "chooseTaskParameter";
+    public static final String NOTIFICATION_EDIT = "editNotification";
+    public static final String CREATE = "create";
+    public static final String NOTIFICATION_CREATE = "createNotification";
+    private static final String EXRACTOR_SUFFIX = "Extractor";
 
     private ApplicationContext ctx;
     private CommandExtractor commandExtractor;
 
-    public QuantCommand extractCommand(QuantMessage message) {
+    public QuantCommand extractCommand(QuantMessage message) throws NoSuchCommandException {
         String text = message.getText();
         QuantCommand quantCommand = commandExtractor.extract(message);
         return quantCommand;
@@ -42,7 +44,7 @@ public class HandlingState implements ApplicationContextAware {
     }
 
     public void changeExtractor(String stateName) {
-        setCommandExtractor(ctx.getBean(stateName, CommandExtractor.class));
+        setCommandExtractor(ctx.getBean(stateName+EXRACTOR_SUFFIX, CommandExtractor.class));
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

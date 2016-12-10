@@ -4,10 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.entity.TaskEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
+import ru.ifmo.quant.entities.TaskEntity;
 
 import java.util.List;
 

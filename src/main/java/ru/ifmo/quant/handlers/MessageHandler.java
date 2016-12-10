@@ -8,8 +8,11 @@ import ru.ifmo.quant.commands.CommandFactory;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.commands.StartCommand;
 import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
+import ru.ifmo.quant.entities.AccountEntity;
 import ru.ifmo.quant.MessagesPool;
+import ru.ifmo.quant.exceptions.BadCommandReturnException;
+import ru.ifmo.quant.exceptions.NoSuchCommandException;
+import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
 /**
  * Created by andrey on 08.11.2016.
@@ -28,8 +31,14 @@ public class MessageHandler implements ApplicationContextAware {
             accountEntity = new AccountEntity();
             accountEntity.insertKey(input.getMessageAddress());
             accountEntity = dataService.save(accountEntity);
-            QuantCommand command = new StartCommand();
-            command.perform(input, null);
+            QuantCommand command = ctx.getBean("startCommand", QuantCommand.class);
+            try {
+                command.perform(input, null);
+            } catch (BadCommandReturnException e) {
+                e.printStackTrace();
+            } catch (NullCommandArgumentException e) {
+                e.printStackTrace();
+            }
         }
         QuantMessage output = new OutputMessage();
         output.setMessageAddress(input.getMessageAddress());
@@ -39,15 +48,24 @@ public class MessageHandler implements ApplicationContextAware {
             process.setAccountEntity(accountEntity);
             processContainer.addProcess(process);
         }
-        QuantCommand command = process.getHandlingState().extractCommand(input);
         String answer = null;
+        QuantCommand command = null;
+        try {
+            command = process.getHandlingState().extractCommand(input);
+        } catch (NoSuchCommandException e) {
+            e.printStackTrace();
+            answer = ctx.getMessage("error.nocommand", null, input.getLocale());
+        }
         try {
             answer = command.perform(input, process);
-        } catch (NullPointerException e) {
+        } catch (BadCommandReturnException e) {
             e.printStackTrace();
-        }
-        if (answer == null) {
-            answer = ctx.getMessage("error", null, input.getLocale());
+            answer = ctx.getMessage("error.wtf", null, input.getLocale());
+        } catch (NullCommandArgumentException e) {
+            e.printStackTrace();
+            answer = ctx.getMessage("error.empty", null, input.getLocale());
+        } catch (NullPointerException e) {
+            //it's ok
         }
         output.setText(answer);
         messagesPool.addToPool(output);

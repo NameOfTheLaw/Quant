@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
+import ru.ifmo.quant.exceptions.BadCommandReturnException;
+import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
 /**
  * Created by andrey on 09.11.2016.
@@ -15,13 +15,37 @@ import ru.ifmo.quant.exceptions.WrongContextCommandException;
 public abstract class QuantCommand implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
+    protected boolean init = false;
+    protected String afterState;
 
     @Autowired
     protected DataService dataService;
 
-    public abstract String perform(QuantMessage input, HandlingProcess handlingProcess);
+    public abstract String perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException;
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.ctx = applicationContext;
     }
+
+    protected boolean isInit() {
+        return init;
+    }
+
+    protected void init() {
+        init = true;
+    }
+
+    public String getAfterState() {
+        return afterState;
+    }
+
+    public void setAfterState(String afterState) {
+        this.afterState = afterState;
+    }
+
+    public boolean isAfterState() {
+        if (getAfterState() != null) return true;
+        return false;
+    }
+
 }

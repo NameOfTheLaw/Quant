@@ -4,10 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.dao.DataService;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.entity.TaskEntity;
-import ru.ifmo.quant.exceptions.WrongContextCommandException;
+import ru.ifmo.quant.entities.TaskEntity;
 
 import java.sql.Date;
 import java.util.List;
@@ -20,8 +17,7 @@ import java.util.List;
 public class TodayCommand extends QuantCommand {
 
     public String perform(QuantMessage input, HandlingProcess process) {
-        //TODO: realise perform method
-        List<TaskEntity> taskEntities = dataService.findTaskEntity(new Date(System.currentTimeMillis()), 1000l * 60 * 60 * 24, process.getAccountEntity());
+        List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(new Date(System.currentTimeMillis()), process.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
 
         if (taskEntities.isEmpty()) {

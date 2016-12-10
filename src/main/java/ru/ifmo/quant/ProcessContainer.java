@@ -1,6 +1,6 @@
 package ru.ifmo.quant;
 
-import ru.ifmo.quant.entity.AccountEntity;
+import ru.ifmo.quant.entities.AccountEntity;
 
 import java.util.*;
 

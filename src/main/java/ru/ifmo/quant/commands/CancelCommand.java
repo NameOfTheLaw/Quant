@@ -14,8 +14,9 @@ import ru.ifmo.quant.HandlingState;
 public class CancelCommand extends QuantCommand {
 
     public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+        handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.DEFAULT);
-        String answer = ctx.getMessage("command.cancel", null, input.getLocale());
+        String answer = ctx.getMessage("command.cancel.text", null, input.getLocale());
         return answer;
     }
 }

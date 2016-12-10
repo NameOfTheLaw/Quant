@@ -1,10 +1,9 @@
 package ru.ifmo.quant.dao;
 
-import ru.ifmo.quant.MessageAddress;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.entity.NotificationEntity;
-import ru.ifmo.quant.entity.TaskEntity;
+import ru.ifmo.quant.entities.AccountEntity;
+import ru.ifmo.quant.entities.NotificationEntity;
+import ru.ifmo.quant.entities.TaskEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -32,4 +31,6 @@ public interface DataService {
     public TaskEntity save(TaskEntity entity);
     public void delete(TaskEntity entity);
 
+    public List<TaskEntity> findTaskEntityForToday(Date date, AccountEntity accountEntity);
+    public List<TaskEntity> findTaskEntityForWeek(Date date, AccountEntity accountEntity);
 }

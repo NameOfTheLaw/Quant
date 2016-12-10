@@ -3,12 +3,14 @@ package ru.ifmo.quant.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.ifmo.quant.MessageAddress;
 import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.entity.AccountEntity;
-import ru.ifmo.quant.entity.NotificationEntity;
-import ru.ifmo.quant.entity.TaskEntity;
+import ru.ifmo.quant.entities.AccountEntity;
+import ru.ifmo.quant.entities.NotificationEntity;
+import ru.ifmo.quant.entities.TaskEntity;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -87,5 +89,32 @@ public class DataServiceImpl implements DataService {
 
     public void delete(TaskEntity entity) {
         taskRepository.delete(entity);
+    }
+
+    public List<TaskEntity> findTaskEntityForToday(Date date, AccountEntity accountEntity) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
+        return taskRepository.findByServerDateBetween(timeStart, timeEnd);
+    }
+
+    public List<TaskEntity> findTaskEntityForWeek(Date date, AccountEntity accountEntity) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
+        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
+        return taskRepository.findByServerDateBetween(timeStart, timeEnd);
     }
 }

@@ -35,4 +35,8 @@ public abstract class QuantMessage {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
+
+    public boolean hasText() {
+        return text != null && !text.equals("");
+    }
 }

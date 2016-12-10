@@ -15,6 +15,8 @@ import ru.ifmo.quant.commands.QuantCommand;
 public class EditCommand extends QuantCommand {
 
     public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+        handlingProcess.clearParameters();
+        handlingProcess.changeState(HandlingState.EDIT);
         String answer = ctx.getMessage("command.edit.intro", null, input.getLocale());
         return answer;
     }

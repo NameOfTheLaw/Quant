@@ -12,10 +12,31 @@ import ru.ifmo.quant.commands.QuantCommand;
 public abstract class CommandExtractor implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
+    protected QuantCommand executingCommand;
 
     public abstract QuantCommand extract(QuantMessage message);
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
+    }
+
+    public boolean isExecuting() {
+        if (executingCommand == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public QuantCommand getExecutingCommand() {
+        return executingCommand;
+    }
+
+    public void setExecutingCommand(QuantCommand command) {
+        executingCommand = command;
+    }
+
+    public void commandIsOver() {
+        executingCommand = null;
     }
 }

@@ -1,6 +1,7 @@
 package ru.ifmo.quant.commands.extractors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.CommandFactory;
@@ -12,6 +13,7 @@ import ru.ifmo.quant.commands.QuantCommand;
  * Created by andrey on 04.12.2016.
  */
 @Component
+@Scope("prototype")
 public class DefaultExtractor extends CommandExtractor {
 
     @Autowired
