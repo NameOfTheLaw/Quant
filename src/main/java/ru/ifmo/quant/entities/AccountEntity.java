@@ -1,11 +1,9 @@
-package ru.ifmo.quant.entity;
+package ru.ifmo.quant.entities;
 
-import org.hibernate.annotations.GenericGenerator;
 import ru.ifmo.quant.MessageAddress;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by andrey on 04.11.2016.

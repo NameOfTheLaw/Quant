@@ -1,11 +1,9 @@
-package ru.ifmo.quant.entity;
+package ru.ifmo.quant.entities;
 
 import ru.ifmo.quant.DateExtractor;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.sql.Timestamp;
 
@@ -135,15 +133,7 @@ public class TaskEntity {
             sdf = new SimpleDateFormat("dd.MM.yy");
         }
 
-        stringBuilder.append(sdf.format(getServerDate()));
-        /*
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(getServerDate());
-        stringBuilder.append(calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)+"."+calendar.get(calendar.YEAR));
-        if (specifiedTime == this.SPECIFIED_TIME) {
-            stringBuilder.append(" "+calendar.get(calendar.HOUR_OF_DAY)+":"+calendar.get(calendar.MINUTE));
-        }
-        */
+        stringBuilder.append("_"+sdf.format(getServerDate())+"_");
         return stringBuilder.toString();
     }
 

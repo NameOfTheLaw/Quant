@@ -12,11 +12,10 @@ import ru.ifmo.quant.commands.QuantCommand;
  */
 @Component
 @Scope("prototype")
-public class PreTaskTimeEditCommand extends QuantCommand {
+public class EditCommand extends QuantCommand {
 
     public String perform(QuantMessage input, HandlingProcess handlingProcess) {
-        String answer = ctx.getMessage("command.edittask.edittime.intro", null, input.getLocale());
-        handlingProcess.changeState(HandlingState.TASK_TIME_EDIT);
+        String answer = ctx.getMessage("command.edit.intro", null, input.getLocale());
         return answer;
     }
 }

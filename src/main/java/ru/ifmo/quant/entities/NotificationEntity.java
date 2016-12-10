@@ -1,9 +1,10 @@
-package ru.ifmo.quant.entity;
+package ru.ifmo.quant.entities;
 
 import ru.ifmo.quant.DateExtractor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by andrey on 04.11.2016.
@@ -93,4 +94,14 @@ public class NotificationEntity {
         }
     }
 
+    @Override
+    public String toString() {
+        SimpleDateFormat sdf;
+        if (specifiedTime == SPECIFIED_TIME) {
+            sdf = new SimpleDateFormat("dd.MM.yy HH:mm");
+        } else {
+            sdf = new SimpleDateFormat("dd.MM.yy");
+        }
+        return "_"+sdf.format(getServerDate())+"_";
+    }
 }
