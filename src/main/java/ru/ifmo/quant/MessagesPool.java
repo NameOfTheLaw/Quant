@@ -2,26 +2,28 @@ package ru.ifmo.quant;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.entities.NotificationEntity;
 import ru.ifmo.quant.handlers.telegram.TelegramHandler;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by andrey on 26.11.2016.
  */
 public class MessagesPool {
 
-    private static final int MESSAGES_POOL_REFRESHING_TIME = 200;
+    private static final int MESSAGES_POOL_REFRESHING_TIME = 100;
     private static final int MESSAGES_POOL_SIZE = 6;
     private static final int NOTIFICATION_GET_TIME = 1000;
     private static final Long NOTIFICATION_LOAD_PERIOD = 2000l;
-    private Queue<QuantMessage> messagesPool = new PriorityQueue<QuantMessage>();
+    private Queue<QuantMessage> messagesPool = new LinkedList<QuantMessage>();
     private TelegramHandler telegramHandler;
     private DataService dataService;
 
@@ -34,6 +36,7 @@ public class MessagesPool {
                 sendMessage.setText(message.getText());
                 sendMessage.setChatId(message.getMessageAddress().getKey().toString());
                 sendMessage.enableMarkdown(true);
+                if (message.isKeyboard()) sendMessage.setReplyMarkup(message.getKeyboard().getRows());
                 try {
                     telegramHandler.sendMessage(sendMessage);
                 } catch (TelegramApiException e) {
@@ -60,6 +63,14 @@ public class MessagesPool {
     public void addToPool(QuantMessage message) {
         try {
             messagesPool.add(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addToPool(Queue<QuantMessage> messages) {
+        try {
+            messagesPool.addAll(messages);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -8,8 +8,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.commands.extractors.CommandExtractor;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
 import ru.ifmo.quant.exceptions.NoSuchCommandException;
+import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
 import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
 /**
@@ -35,12 +37,17 @@ public class CommandAspect implements ApplicationContextAware {
 
     @Around(value = "execution(* ru.ifmo.quant.HandlingState.extractCommand(..)) && args(quantMessage)")
     private Object extractCommand(ProceedingJoinPoint pjp, QuantMessage quantMessage) throws Throwable {
-        Object retVal = pjp.proceed();
         if (quantMessage.getText().equals(cancelCommand)) {
             return ctx.getBean("cancelCommand");
         }
+        Object retVal = pjp.proceed();
         if (retVal == null) {
-            throw new NoSuchCommandException("No such command in extractor "+pjp.getTarget().getClass());
+            Object defaultRetVal = ctx.getBean("defaultExtractor", CommandExtractor.class).extract(quantMessage);
+            if (defaultRetVal == null) {
+                throw new NoSuchCommandException("No such command in extractor " + pjp.getTarget().getClass());
+            } else {
+                throw new NoSuchCommandInContextException("This command is not appropriate here: "+defaultRetVal.getClass());
+            }
         }
         return retVal;
     }

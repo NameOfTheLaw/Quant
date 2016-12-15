@@ -71,6 +71,8 @@
         <property name="dataService" ref="dataService"/>
     </bean>
 
+    <util:properties id="commandsDescriptions" location="classpath:commands-description.properties"/>
+
     <!-- MessageSource (for locale messages) -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="locale/messages"/>

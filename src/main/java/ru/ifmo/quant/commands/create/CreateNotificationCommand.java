@@ -2,13 +2,14 @@ package ru.ifmo.quant.commands.create;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.DateExtractor;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.HandlingState;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.entities.NotificationEntity;
 import ru.ifmo.quant.entities.TaskEntity;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 10.12.2016.
@@ -17,7 +18,8 @@ import ru.ifmo.quant.entities.TaskEntity;
 @Scope("prototype")
 public class CreateNotificationCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         DateExtractor dateExtractor = new DateExtractor(input.getText());
         String answer;
         if (!isInit()) {
@@ -39,6 +41,7 @@ public class CreateNotificationCommand extends QuantCommand {
                 answer = ctx.getMessage("command.createnotification.confirmation", null, input.getLocale());
             }
         }
-        return answer;
+        output.add(new OutputMessage(input, answer));
+        return output;
     }
 }

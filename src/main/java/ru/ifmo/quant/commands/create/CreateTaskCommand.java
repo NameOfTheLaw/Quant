@@ -2,14 +2,15 @@ package ru.ifmo.quant.commands.create;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.DateExtractor;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.HandlingState;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.entities.TaskEntity;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
 import ru.ifmo.quant.exceptions.NullCommandArgumentException;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 10.12.2016.
@@ -18,7 +19,8 @@ import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 @Scope("prototype")
 public class CreateTaskCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         String answer;
 
         if (!isInit()) {
@@ -42,7 +44,9 @@ public class CreateTaskCommand extends QuantCommand {
                     handlingProcess.changeState(HandlingState.NOTIFICATION_CREATE);
                 }
                 try {
-                    answer = handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess);
+                    output.add(new OutputMessage(input, answer));
+                    output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
+                    return output;
                 } catch (BadCommandReturnException e) {
                     e.printStackTrace();
                 } catch (NullCommandArgumentException e) {
@@ -53,6 +57,7 @@ public class CreateTaskCommand extends QuantCommand {
             }
             handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
         }
-        return answer;
+        output.add(new OutputMessage(input, answer));
+        return output;
     }
 }

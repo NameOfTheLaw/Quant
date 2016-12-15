@@ -7,6 +7,7 @@ import ru.ifmo.quant.commands.extractors.CommandExtractor;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.exceptions.NoSuchCommandException;
+import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
 
 /**
  * Created by andrey on 04.12.2016.
@@ -29,7 +30,7 @@ public class HandlingState implements ApplicationContextAware {
     private ApplicationContext ctx;
     private CommandExtractor commandExtractor;
 
-    public QuantCommand extractCommand(QuantMessage message) throws NoSuchCommandException {
+    public QuantCommand extractCommand(QuantMessage message) throws NoSuchCommandException, NoSuchCommandInContextException {
         String text = message.getText();
         QuantCommand quantCommand = commandExtractor.extract(message);
         return quantCommand;

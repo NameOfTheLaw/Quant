@@ -18,8 +18,6 @@ public class Quant {
 
     public static void main(String[] args) {
         GenericXmlApplicationContext ctx = new GenericXmlApplicationContext("app-context.xml");
-
-        //TODO: use TDD JUnit
     }
 
 }

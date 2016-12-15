@@ -2,12 +2,13 @@ package ru.ifmo.quant.commands.edit;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.DateExtractor;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.HandlingState;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.entities.TaskEntity;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 07.12.2016.
@@ -16,7 +17,8 @@ import ru.ifmo.quant.entities.TaskEntity;
 @Scope("prototype")
 public class TaskReplaceCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         TaskEntity taskEntity = handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class);
         String answer = null;
 
@@ -39,7 +41,8 @@ public class TaskReplaceCommand extends QuantCommand {
                 answer = ctx.getMessage("command.edittask.replacetask", new Object[]{taskEntity.getBody()}, input.getLocale());
             }
         }
-        return answer;
+        output.add(new OutputMessage(input, answer));
+        return output;
     }
 
 }

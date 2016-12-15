@@ -3,11 +3,15 @@ package ru.ifmo.quant.commands;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
+import ru.ifmo.quant.OutputMessage;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.entities.TaskEntity;
 
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 09.11.2016.
@@ -16,7 +20,8 @@ import java.util.List;
 @Scope("prototype")
 public class TodayCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, HandlingProcess process) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess process) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(new Date(System.currentTimeMillis()), process.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -28,6 +33,7 @@ public class TodayCommand extends QuantCommand {
                 stringBuilder.append(">" + taskEntity + "\n");
             }
         }
-        return stringBuilder.toString();
+        output.add(new OutputMessage(input, stringBuilder.toString()));
+        return output;
     }
 }

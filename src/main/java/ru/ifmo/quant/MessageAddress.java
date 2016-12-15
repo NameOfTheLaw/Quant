@@ -30,4 +30,21 @@ public class MessageAddress {
     public void setKey(Long key) {
         this.key = key;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!o.getClass().equals(this.getClass())) return false;
+
+        MessageAddress messageAddress = (MessageAddress) o;
+        if (!messageAddress.getKey().equals(this.getKey())) return false;
+        if (!messageAddress.getSocial().equals(this.getSocial())) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = social != null ? social.hashCode() : 0;
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+        return result;
+    }
 }

@@ -12,7 +12,12 @@ import ru.ifmo.quant.entities.AccountEntity;
 import ru.ifmo.quant.MessagesPool;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
 import ru.ifmo.quant.exceptions.NoSuchCommandException;
+import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
 import ru.ifmo.quant.exceptions.NullCommandArgumentException;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 08.11.2016.
@@ -25,7 +30,8 @@ public class MessageHandler implements ApplicationContextAware {
     private CommandFactory commandFactory;
     private MessagesPool messagesPool;
 
-    public QuantMessage update(QuantMessage input) {
+    public Queue<QuantMessage> update(QuantMessage input) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         AccountEntity accountEntity = dataService.findAccountEntity(input);
         if (accountEntity == null) {
             accountEntity = new AccountEntity();
@@ -40,8 +46,6 @@ public class MessageHandler implements ApplicationContextAware {
                 e.printStackTrace();
             }
         }
-        QuantMessage output = new OutputMessage();
-        output.setMessageAddress(input.getMessageAddress());
         HandlingProcess process = processContainer.getProcess(accountEntity);
         if (process == null) {
             process = ctx.getBean("handlingProcess", HandlingProcess.class);
@@ -52,12 +56,19 @@ public class MessageHandler implements ApplicationContextAware {
         QuantCommand command = null;
         try {
             command = process.getHandlingState().extractCommand(input);
+        } catch (NoSuchCommandInContextException e) {
+            e.printStackTrace();
+            answer = ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale());
+            output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.CANCEL_KEYBOARD));
+            return output;
         } catch (NoSuchCommandException e) {
             e.printStackTrace();
             answer = ctx.getMessage("error.nocommand", null, input.getLocale());
         }
         try {
-            answer = command.perform(input, process);
+            output = command.perform(input, process);
+            messagesPool.addToPool(output);
+            return output;
         } catch (BadCommandReturnException e) {
             e.printStackTrace();
             answer = ctx.getMessage("error.wtf", null, input.getLocale());
@@ -67,7 +78,7 @@ public class MessageHandler implements ApplicationContextAware {
         } catch (NullPointerException e) {
             //it's ok
         }
-        output.setText(answer);
+        output.add(new OutputMessage(input, answer));
         messagesPool.addToPool(output);
         return output;
     }

@@ -9,6 +9,9 @@ import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
 import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
+import java.util.List;
+import java.util.Queue;
+
 /**
  * Created by andrey on 09.11.2016.
  */
@@ -21,7 +24,7 @@ public abstract class QuantCommand implements ApplicationContextAware {
     @Autowired
     protected DataService dataService;
 
-    public abstract String perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException;
+    public abstract Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException;
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.ctx = applicationContext;

@@ -2,9 +2,11 @@ package ru.ifmo.quant.commands;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.QuantMessage;
-import ru.ifmo.quant.HandlingState;
+import ru.ifmo.quant.*;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 22.11.2016.
@@ -13,10 +15,12 @@ import ru.ifmo.quant.HandlingState;
 @Scope("prototype")
 public class CancelCommand extends QuantCommand {
 
-    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.DEFAULT);
         String answer = ctx.getMessage("command.cancel.text", null, input.getLocale());
-        return answer;
+        output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT_KEYBOARD));
+        return output;
     }
 }

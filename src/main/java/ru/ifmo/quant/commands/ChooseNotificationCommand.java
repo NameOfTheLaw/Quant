@@ -2,14 +2,14 @@ package ru.ifmo.quant.commands;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.DateExtractor;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.HandlingState;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.entities.NotificationEntity;
 import ru.ifmo.quant.entities.TaskEntity;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by andrey on 10.12.2016.
@@ -21,7 +21,8 @@ public class ChooseNotificationCommand extends QuantCommand {
     private List<NotificationEntity> notificationsList;
     private NotificationEntity notification;
 
-    public String perform(QuantMessage input, HandlingProcess handlingProcess) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
+        Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         StringBuilder stringBuilder = new StringBuilder();
         if (!isInit()) {
             notificationsList = dataService.findNotificationEntity(handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class));
@@ -65,6 +66,7 @@ public class ChooseNotificationCommand extends QuantCommand {
                 }
             }
         }
-        return stringBuilder.toString();
+        output.add(new OutputMessage(input, stringBuilder.toString()));
+        return output;
     }
 }
