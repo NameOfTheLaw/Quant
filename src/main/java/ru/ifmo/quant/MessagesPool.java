@@ -2,13 +2,17 @@ package ru.ifmo.quant;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ifmo.quant.dao.DataService;
+import ru.ifmo.quant.entities.AccountEntity;
 import ru.ifmo.quant.entities.NotificationEntity;
+import ru.ifmo.quant.entities.TaskEntity;
 import ru.ifmo.quant.handlers.telegram.TelegramHandler;
 
 import java.sql.Timestamp;
@@ -23,6 +27,8 @@ public class MessagesPool {
     private static final int MESSAGES_POOL_SIZE = 6;
     private static final int NOTIFICATION_GET_TIME = 1000;
     private static final Long NOTIFICATION_LOAD_PERIOD = 2000l;
+    //every day at 20:00
+    private static final String TASKS_PROGRESS_NOTICING_CRON = "0 * 20 * * *";
     private Queue<QuantMessage> messagesPool = new LinkedList<QuantMessage>();
     private TelegramHandler telegramHandler;
     private DataService dataService;
@@ -47,7 +53,7 @@ public class MessagesPool {
     }
 
     @Scheduled(fixedRate = NOTIFICATION_GET_TIME)
-    public void addNotificationMessagesToPool () {
+    public void addNotificationMessagesToPool() {
         List<NotificationEntity> notifications = dataService.findNotificationEntity(new Timestamp(System.currentTimeMillis()), NOTIFICATION_LOAD_PERIOD);
         if (notifications!=null) {
             for (NotificationEntity entity: notifications) {
@@ -58,6 +64,11 @@ public class MessagesPool {
                 addToPool(message);
             }
         }
+    }
+
+    @Scheduled(cron = TASKS_PROGRESS_NOTICING_CRON)
+    public void addProgressNotificationToPool() {
+        //TODO: realise tasksProgressNoticing
     }
 
     public void addToPool(QuantMessage message) {

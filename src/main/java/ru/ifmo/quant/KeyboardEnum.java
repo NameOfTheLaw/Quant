@@ -15,7 +15,7 @@ public enum KeyboardEnum {
     DEFAULT_KEYBOARD(new String[][] {{"/create", "/help"},{"/edit", "/today"}}),
     CREATE_KEYBOARD(new String[][] {{"/createtask", "/createnotification"}}),
     EDIT_KEYBOARD(new String[][] {{"/edittask", "/editnotification"}}),
-    CHOOSE_TASK_PARAMETER(new String[][] {{"/edittaskbody", "/edittasktime"}, {"/replacetask", "/removetask(in progress)"}}),
+    CHOOSE_TASK_PARAMETER(new String[][] {{"/edittaskbody", "/edittasktime"}, {"/replacetask", "/removetask"}}),
     CANCEL_KEYBOARD(new String[][] {{"/cancel"},{"/help"}});
 
     ReplyKeyboardMarkup keyboard;

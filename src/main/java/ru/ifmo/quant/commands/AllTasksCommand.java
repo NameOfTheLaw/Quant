@@ -23,10 +23,15 @@ public class AllTasksCommand extends QuantCommand {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         List<TaskEntity> tasks = dataService.findTaskEntity(handlingProcess.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
-        for (TaskEntity task: tasks) {
-            stringBuilder.append("> "+task.toString()+"\n");
+        if (!tasks.isEmpty()) {
+            output.add(new OutputMessage(input, ctx.getMessage("command.alltasks.intro", null, input.getLocale())));
+            for (TaskEntity task : tasks) {
+                stringBuilder.append("> " + task.toString() + "\n");
+                output.add(new OutputMessage(input, stringBuilder.toString()));
+            }
+        } else {
+            output.add(new OutputMessage(input, ctx.getMessage("command.alltasks.empty", null, input.getLocale())));
         }
-        output.add(new OutputMessage(input, stringBuilder.toString()));
         return output;
     }
 }

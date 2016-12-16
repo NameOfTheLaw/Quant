@@ -27,6 +27,10 @@ public class ChooseTaskParameterExtractor extends CommandExtractor {
             command = ctx.getBean("taskReplaceCommand", QuantCommand.class);
             setExecutingCommand(command);
         }
+        if (message.getText().equals(ctx.getMessage("command.edittask.removetask", null, message.getLocale()))) {
+            command = ctx.getBean("removeTaskCommand", QuantCommand.class);
+            setExecutingCommand(command);
+        }
         return command;
     }
 }

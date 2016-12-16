@@ -36,6 +36,7 @@ public class CreateNotificationCommand extends QuantCommand {
                 notificationEntity.extractDate(dateExtractor);
                 dataService.save(notificationEntity);
                 answer = ctx.getMessage("command.createnotification.successful", null, input.getLocale());
+                handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
             } else {
                 answer = ctx.getMessage("command.createnotification.confirmation", null, input.getLocale());

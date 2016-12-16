@@ -113,7 +113,7 @@ public class TaskEntity {
         this.account = account;
     }
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", orphanRemoval = true)
     public List<NotificationEntity> getNotifications() {
         return notifications;
     }

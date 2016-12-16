@@ -9,10 +9,10 @@ import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.extractors.CommandExtractor;
-import ru.ifmo.quant.exceptions.BadCommandReturnException;
-import ru.ifmo.quant.exceptions.NoSuchCommandException;
-import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
-import ru.ifmo.quant.exceptions.NullCommandArgumentException;
+import ru.ifmo.quant.exceptions.*;
+
+import java.util.Collection;
+import java.util.Queue;
 
 /**
  * Created by andrey on 10.12.2016.
@@ -28,8 +28,9 @@ public class CommandAspect implements ApplicationContextAware {
         if (!quantMessage.hasText()) {
             throw new NullCommandArgumentException("Commands need not null message text to perform operations");
         } else {
-            Object retVal = pjp.proceed();
-            if (retVal == null) throw new BadCommandReturnException("Command performing returned null");
+            Collection retVal = (Collection) pjp.proceed();
+            if (retVal == null) throw new NullCommandReturnException("Command performing returned null");
+            if (retVal.isEmpty()) throw new EmptyCommandReturnException("Command performing returned empty Collection");
             return retVal;
         }
     }

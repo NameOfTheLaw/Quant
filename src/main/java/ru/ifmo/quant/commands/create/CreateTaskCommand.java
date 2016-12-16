@@ -46,6 +46,7 @@ public class CreateTaskCommand extends QuantCommand {
                 try {
                     output.add(new OutputMessage(input, answer));
                     output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
+                    handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
                     return output;
                 } catch (BadCommandReturnException e) {
                     e.printStackTrace();

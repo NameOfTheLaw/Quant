@@ -63,6 +63,16 @@
             <version>${spring.framework.data.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.framework.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.framework.security.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>${telegrambots.version}</version>
@@ -98,6 +108,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.framework.version>4.3.3.RELEASE</spring.framework.version>
         <spring.framework.data.version>1.10.4.RELEASE</spring.framework.data.version>
+        <spring.framework.security.version>4.2.0.RELEASE</spring.framework.security.version>
         <telegrambots.version>2.4.0</telegrambots.version>
         <hibernate.version>5.0.1.Final</hibernate.version>
     </properties>

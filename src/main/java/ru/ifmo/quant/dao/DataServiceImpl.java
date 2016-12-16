@@ -43,12 +43,20 @@ public class DataServiceImpl implements DataService {
         return null;
     }
 
+    public Iterable<AccountEntity> findAllAccountEntities() {
+        return accountRepository.findAll();
+    }
+
     public AccountEntity save(AccountEntity entity) {
         return accountRepository.save(entity);
     }
 
     public void delete(AccountEntity entity) {
         accountRepository.delete(entity);
+    }
+
+    public Long countAccountEntities() {
+        return accountRepository.count();
     }
 
     public NotificationEntity findNotificationEntity(Long id) {
@@ -71,6 +79,10 @@ public class DataServiceImpl implements DataService {
         notificationRepository.delete(entity);
     }
 
+    public Long countNotificationEntities() {
+        return notificationRepository.count();
+    }
+
     public TaskEntity findTaskEntity(Long id) {
         return taskRepository.findOne(id);
     }
@@ -89,6 +101,10 @@ public class DataServiceImpl implements DataService {
 
     public void delete(TaskEntity entity) {
         taskRepository.delete(entity);
+    }
+
+    public Long countTaskEntities() {
+        return taskRepository.count();
     }
 
     public List<TaskEntity> findTaskEntityForToday(Date date, AccountEntity accountEntity) {

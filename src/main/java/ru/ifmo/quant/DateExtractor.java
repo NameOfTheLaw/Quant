@@ -34,7 +34,6 @@ public class DateExtractor {
             timeString = parse.get(0).getText();
             text = rawText.replace(parse.get(0).getText(), "").replaceAll("\\s+", " ").trim();
         } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

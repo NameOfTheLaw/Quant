@@ -40,9 +40,7 @@ public class MessageHandler implements ApplicationContextAware {
             QuantCommand command = ctx.getBean("startCommand", QuantCommand.class);
             try {
                 command.perform(input, null);
-            } catch (BadCommandReturnException e) {
-                e.printStackTrace();
-            } catch (NullCommandArgumentException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -57,28 +55,18 @@ public class MessageHandler implements ApplicationContextAware {
         try {
             command = process.getHandlingState().extractCommand(input);
         } catch (NoSuchCommandInContextException e) {
-            e.printStackTrace();
-            answer = ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale());
-            output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.CANCEL_KEYBOARD));
-            return output;
+            output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL_KEYBOARD));
         } catch (NoSuchCommandException e) {
-            e.printStackTrace();
-            answer = ctx.getMessage("error.nocommand", null, input.getLocale());
+            output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, input.getLocale())));
         }
         try {
             output = command.perform(input, process);
-            messagesPool.addToPool(output);
-            return output;
         } catch (BadCommandReturnException e) {
-            e.printStackTrace();
             answer = ctx.getMessage("error.wtf", null, input.getLocale());
         } catch (NullCommandArgumentException e) {
-            e.printStackTrace();
             answer = ctx.getMessage("error.empty", null, input.getLocale());
         } catch (NullPointerException e) {
-            //it's ok
         }
-        output.add(new OutputMessage(input, answer));
         messagesPool.addToPool(output);
         return output;
     }

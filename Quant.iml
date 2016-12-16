@@ -45,6 +45,9 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:4.2.8.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.slf4j:jcl-over-slf4j:1.7.21" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:4.2.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:4.2.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.telegram:telegrambots:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.hk2.external:javax.inject:2.5.0-b05" level="project" />
