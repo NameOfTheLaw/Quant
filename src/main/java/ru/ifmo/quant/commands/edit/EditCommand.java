@@ -21,7 +21,7 @@ public class EditCommand extends QuantCommand {
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.EDIT);
         String answer = ctx.getMessage("command.edit.intro", null, input.getLocale());
-        output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.EDIT_KEYBOARD));
+        output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.EDIT));
         return output;
     }
 }

@@ -1,8 +1,10 @@
 package ru.ifmo.quant.handlers;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.core.Authentication;
 import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.CommandFactory;
 import ru.ifmo.quant.commands.QuantCommand;
@@ -14,6 +16,8 @@ import ru.ifmo.quant.exceptions.BadCommandReturnException;
 import ru.ifmo.quant.exceptions.NoSuchCommandException;
 import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
 import ru.ifmo.quant.exceptions.NullCommandArgumentException;
+import ru.ifmo.quant.security.QuantAuthentificationManager;
+import ru.ifmo.quant.security.QuantAuthentificationToken;
 
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -29,6 +33,7 @@ public class MessageHandler implements ApplicationContextAware {
     private DataService dataService;
     private CommandFactory commandFactory;
     private MessagesPool messagesPool;
+    private QuantAuthentificationManager authentificationManager;
 
     public Queue<QuantMessage> update(QuantMessage input) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
@@ -48,24 +53,27 @@ public class MessageHandler implements ApplicationContextAware {
         if (process == null) {
             process = ctx.getBean("handlingProcess", HandlingProcess.class);
             process.setAccountEntity(accountEntity);
+            Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(accountEntity.getId()));
+            process.setAuthentication(response);
             processContainer.addProcess(process);
         }
-        String answer = null;
         QuantCommand command = null;
         try {
             command = process.getHandlingState().extractCommand(input);
         } catch (NoSuchCommandInContextException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL_KEYBOARD));
+            output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL));
         } catch (NoSuchCommandException e) {
             output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, input.getLocale())));
         }
         try {
             output = command.perform(input, process);
         } catch (BadCommandReturnException e) {
-            answer = ctx.getMessage("error.wtf", null, input.getLocale());
+            output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, input.getLocale())));
         } catch (NullCommandArgumentException e) {
-            answer = ctx.getMessage("error.empty", null, input.getLocale());
+            output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, input.getLocale())));
         } catch (NullPointerException e) {
+        } catch (SecurityException e) {
+            output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, input.getLocale())));
         }
         messagesPool.addToPool(output);
         return output;
@@ -105,5 +113,13 @@ public class MessageHandler implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
+    }
+
+    public QuantAuthentificationManager getAuthentificationManager() {
+        return authentificationManager;
+    }
+
+    public void setAuthentificationManager(QuantAuthentificationManager authentificationManager) {
+        this.authentificationManager = authentificationManager;
     }
 }

@@ -20,7 +20,7 @@ public class CancelCommand extends QuantCommand {
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.DEFAULT);
         String answer = ctx.getMessage("command.cancel.text", null, input.getLocale());
-        output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT_KEYBOARD));
+        output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }
 }

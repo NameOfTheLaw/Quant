@@ -32,7 +32,7 @@ public class StartCommand extends QuantCommand {
         }
         QuantMessage answer = new OutputMessage(input, stringBuilder.toString());
         output.add(answer);
-        answer.setKeyboard(KeyboardEnum.DEFAULT_KEYBOARD);
+        answer.setKeyboard(KeyboardEnum.DEFAULT);
         return output;
     }
 }

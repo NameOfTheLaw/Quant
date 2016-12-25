@@ -41,8 +41,8 @@ public class ChooseNotificationCommand extends QuantCommand {
             init();
         } else {
             if (notification == null) {
-                int i = Integer.parseInt(input.getText()) - 1;
                 try {
+                    int i = Integer.parseInt(input.getText()) - 1;
                     notification = notificationsList.get(i);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -61,6 +61,8 @@ public class ChooseNotificationCommand extends QuantCommand {
                     stringBuilder.append(ctx.getMessage("command.editnotification.succesfullend", null, input.getLocale()));
                     handlingProcess.clearParameters();
                     handlingProcess.changeState(HandlingState.DEFAULT);
+                    output.add(new OutputMessage(input, stringBuilder.toString()).setKeyboard(KeyboardEnum.DEFAULT));
+                    return output;
                 } else {
                     stringBuilder.append(ctx.getMessage("command.editnotification.edittime.toconfirm", null, input.getLocale()));
                 }

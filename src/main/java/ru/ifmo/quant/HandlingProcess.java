@@ -1,6 +1,7 @@
 package ru.ifmo.quant;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.core.Authentication;
 import ru.ifmo.quant.entities.AccountEntity;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class HandlingProcess implements InitializingBean {
     private HandlingState handlingState;
     private AccountEntity accountEntity;
     private HashMap<String,Object> processParameters;
+    private Authentication authentication;
 
     public void afterPropertiesSet() throws Exception {
         processParameters = new HashMap<String, Object>();
@@ -54,6 +56,14 @@ public class HandlingProcess implements InitializingBean {
 
     public void setParameter(String name, Object object) {
         processParameters.put(name, object);
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
     }
 
     public <K> K getParameter(String name, Class<K> className) {

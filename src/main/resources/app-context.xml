@@ -55,6 +55,7 @@
         <property name="dataService" ref="dataService"/>
         <property name="commandFactory" ref="commandFactory"/>
         <property name="sendingPool" ref="sendingPool"/>
+        <property name="authentificationManager" ref="authentificationManager"/>
     </bean>
 
     <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
@@ -89,8 +90,18 @@
         <property name="handlingState" ref="handingState"/>
     </bean>
 
-    <!-- CommandAspect declaration -->
+    <!-- Aspects declaration -->
     <bean id="commandAspect" class="ru.ifmo.quant.aspects.CommandAspect"/>
+    <bean id="securityAspect" class="ru.ifmo.quant.security.SecurityAspect"/>
+
+    <!-- AuthentificationManager with admins id's-->
+    <bean id="authentificationManager" class="ru.ifmo.quant.security.QuantAuthentificationManager">
+        <property name="adminsIds">
+            <set>
+                <value>1</value>
+            </set>
+        </property>
+    </bean>
 
     <!-- Activates aop autoproxy -->
 	<aop:aspectj-autoproxy />

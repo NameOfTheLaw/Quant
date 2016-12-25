@@ -37,6 +37,8 @@ public class TaskReplaceCommand extends QuantCommand {
                 answer = ctx.getMessage("command.edittask.succesfullend", null, input.getLocale());
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
+                output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
+                return output;
             } else {
                 answer = ctx.getMessage("command.edittask.replacetask", new Object[]{taskEntity.getBody()}, input.getLocale());
             }

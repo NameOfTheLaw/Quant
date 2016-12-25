@@ -21,6 +21,7 @@ import java.util.Queue;
 public class CommandAspect implements ApplicationContextAware {
 
     private static final String cancelCommand = "/cancel";
+    private static final String helpCommand = "/help";
     private ApplicationContext ctx;
 
     @Around(value = "execution(* ru.ifmo.quant.commands..*.perform(..)) && args(quantMessage, handlingProcess)")

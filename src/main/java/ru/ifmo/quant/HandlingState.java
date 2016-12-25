@@ -15,17 +15,13 @@ import ru.ifmo.quant.exceptions.NoSuchCommandInContextException;
 public class HandlingState implements ApplicationContextAware {
 
     public static final String DEFAULT = "default";
-    public static final String TASK_CREATING = "taskCreating";
-    public static final String TASK_CONFIRMATION = "taskConfirmation";
-    public static final String NOTIFICATION_CREATING = "notificationCreating";
-    public static final String NOTIFICATION_CONFIRMATION = "notificationConfirmation";
     public static final String EDIT = "edit";
-    public static final String TASK_EDIT ="taskEdit";
     public static final String CHOOSE_TASK_PARAMETER = "chooseTaskParameter";
     public static final String NOTIFICATION_EDIT = "editNotification";
     public static final String CREATE = "create";
     public static final String NOTIFICATION_CREATE = "createNotification";
     private static final String EXRACTOR_SUFFIX = "Extractor";
+    private String currentExtractorName;
 
     private ApplicationContext ctx;
     private CommandExtractor commandExtractor;
@@ -45,10 +41,20 @@ public class HandlingState implements ApplicationContextAware {
     }
 
     public void changeExtractor(String stateName) {
-        setCommandExtractor(ctx.getBean(stateName+EXRACTOR_SUFFIX, CommandExtractor.class));
+        String extractorName = stateName+EXRACTOR_SUFFIX;
+        setCommandExtractor(ctx.getBean(extractorName, CommandExtractor.class));
+        setCurrentExtractorName(extractorName);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
+    }
+
+    public String getCurrentExtractorName() {
+        return currentExtractorName;
+    }
+
+    public void setCurrentExtractorName(String currentExtractorName) {
+        this.currentExtractorName = currentExtractorName;
     }
 }

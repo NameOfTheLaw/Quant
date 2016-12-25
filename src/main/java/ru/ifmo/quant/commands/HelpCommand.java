@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
+import ru.ifmo.quant.KeyboardEnum;
 import ru.ifmo.quant.OutputMessage;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
@@ -31,7 +32,7 @@ public class HelpCommand extends QuantCommand {
             String name = (String) propertyNames.nextElement();
             stringBuilder.append(name+" - "+commandsDescriptions.get(name)+"\n");
         }
-        output.add(new OutputMessage(input, stringBuilder.toString()));
+        output.add(new OutputMessage(input, stringBuilder.toString()).setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }
 }

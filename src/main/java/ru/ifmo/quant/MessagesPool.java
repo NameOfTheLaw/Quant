@@ -1,5 +1,8 @@
 package ru.ifmo.quant;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -21,17 +24,20 @@ import java.util.*;
 /**
  * Created by andrey on 26.11.2016.
  */
-public class MessagesPool {
+public class MessagesPool implements ApplicationContextAware {
 
     private static final int MESSAGES_POOL_REFRESHING_TIME = 100;
     private static final int MESSAGES_POOL_SIZE = 6;
     private static final int NOTIFICATION_GET_TIME = 1000;
     private static final Long NOTIFICATION_LOAD_PERIOD = 2000l;
+    private static final int TASK_GET_TIME = 2000;
+    private static final Long TASK_LOAD_PERIOD = 2000l;
     //every day at 20:00
     private static final String TASKS_PROGRESS_NOTICING_CRON = "0 * 20 * * *";
     private Queue<QuantMessage> messagesPool = new LinkedList<QuantMessage>();
     private TelegramHandler telegramHandler;
     private DataService dataService;
+    private ApplicationContext ctx;
 
     @Scheduled(fixedRate = MESSAGES_POOL_REFRESHING_TIME)
     private void cleanPool() {
@@ -58,8 +64,24 @@ public class MessagesPool {
         if (notifications!=null) {
             for (NotificationEntity entity: notifications) {
                 QuantMessage message = new OutputMessage();
-                message.setText("Notice you about "+entity.getTask());
+                //TODO: getLocale from account
+                message.setText(ctx.getMessage("messagepool.notification", null, Locale.US)+entity.getTask());
                 message.setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, entity.getTask().getAccount().getTelegramKey()));
+                dataService.delete(entity);
+                addToPool(message);
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = TASK_GET_TIME)
+    public void addTaskMessagesToPool() {
+        List<TaskEntity> taskEntities = dataService.findTaskEntity(new Timestamp(System.currentTimeMillis()), TASK_LOAD_PERIOD);
+        if (taskEntities!=null) {
+            for (TaskEntity entity: taskEntities) {
+                QuantMessage message = new OutputMessage();
+                //TODO: getLocale from account
+                message.setText(ctx.getMessage("messagepool.task", null, Locale.US)+entity.getBody());
+                message.setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, entity.getAccount().getTelegramKey()));
                 dataService.delete(entity);
                 addToPool(message);
             }
@@ -101,5 +123,9 @@ public class MessagesPool {
 
     public void setDataService(DataService dataService) {
         this.dataService = dataService;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.ctx = applicationContext;
     }
 }

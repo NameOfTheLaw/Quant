@@ -55,6 +55,10 @@ public class DataServiceImpl implements DataService {
         accountRepository.delete(entity);
     }
 
+    public void deleteAllAccounts() {
+        accountRepository.deleteAll();
+    }
+
     public Long countAccountEntities() {
         return accountRepository.count();
     }
@@ -63,7 +67,7 @@ public class DataServiceImpl implements DataService {
         return notificationRepository.findOne(id);
     }
 
-    public List<NotificationEntity> findNotificationEntity(Date serverDate, Long period) {
+    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period) {
         return notificationRepository.findByServerDate(new Timestamp(serverDate.getTime()+period));
     }
 
@@ -79,6 +83,10 @@ public class DataServiceImpl implements DataService {
         notificationRepository.delete(entity);
     }
 
+    public void deleteAllNotifications() {
+        notificationRepository.deleteAll();
+    }
+
     public Long countNotificationEntities() {
         return notificationRepository.count();
     }
@@ -91,8 +99,13 @@ public class DataServiceImpl implements DataService {
         return taskRepository.findByAccount(accountEntity);
     }
 
-    public List<TaskEntity> findTaskEntity(Date serverDate, Long period, AccountEntity accountEntity) {
-        return taskRepository.findByServerDateAndAccount_Id(new Timestamp(serverDate.getTime()+period), accountEntity.getId());
+    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period) {
+        return taskRepository.findByServerDateBetween(serverDate, new Timestamp(serverDate.getTime()+period));
+    }
+
+    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period, AccountEntity accountEntity) {
+        //return taskRepository.findByServerDateAndAccount_Id(new Timestamp(serverDate.getTime()+period), accountEntity.getId());
+        return taskRepository.findByAccountAndServerDateBetween(accountEntity, serverDate, new Timestamp(serverDate.getTime()+period));
     }
 
     public TaskEntity save(TaskEntity entity) {
@@ -103,34 +116,40 @@ public class DataServiceImpl implements DataService {
         taskRepository.delete(entity);
     }
 
+    public void deleteAllTasks() {
+        taskRepository.deleteAll();
+    }
+
     public Long countTaskEntities() {
         return taskRepository.count();
     }
 
-    public List<TaskEntity> findTaskEntityForToday(Date date, AccountEntity accountEntity) {
+    public List<TaskEntity> findTaskEntityForToday(Timestamp date, AccountEntity accountEntity) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        calendar.add(Calendar.DATE, 1);
         Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
-        return taskRepository.findByServerDateBetween(timeStart, timeEnd);
+        return taskRepository.findByAccountAndServerDateBetween(accountEntity, timeStart, timeEnd);
     }
 
-    public List<TaskEntity> findTaskEntityForWeek(Date date, AccountEntity accountEntity) {
+    public List<TaskEntity> findTaskEntityForWeek(Timestamp date, AccountEntity accountEntity) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
+        //TODO: add timezone week. In US SUNDAY-MONDAY
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
-        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        calendar.add(Calendar.DATE, 7);
         Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
-        return taskRepository.findByServerDateBetween(timeStart, timeEnd);
+        return taskRepository.findByAccountAndServerDateBetween(accountEntity, timeStart, timeEnd);
     }
 }

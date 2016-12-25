@@ -8,6 +8,7 @@ import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.entities.TaskEntity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -22,7 +23,7 @@ public class WeekCommand extends QuantCommand {
 
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess process) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        List<TaskEntity> taskEntities = dataService.findTaskEntityForWeek(new Date(System.currentTimeMillis()), process.getAccountEntity());
+        List<TaskEntity> taskEntities = dataService.findTaskEntityForWeek(new Timestamp(System.currentTimeMillis()), process.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
 
         if (taskEntities.isEmpty()) {

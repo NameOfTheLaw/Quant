@@ -24,8 +24,14 @@ public class CreateTaskCommand extends QuantCommand {
         String answer;
 
         if (!isInit()) {
-            answer = ctx.getMessage("command.createtask.intro", null, input.getLocale());
+            output.add(new OutputMessage(input, ctx.getMessage("command.createtask.intro", null, input.getLocale()))
+                .setKeyboard(KeyboardEnum.CANCEL));
+            if (handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+                handlingProcess.changeState(HandlingState.CREATE);
+                handlingProcess.getHandlingState().getCommandExtractor().setExecutingCommand(this);
+            }
             init();
+            return output;
         } else {
             TaskEntity taskEntity = handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class);
             DateExtractor dateExtractor = new DateExtractor(input.getText());
@@ -36,6 +42,9 @@ public class CreateTaskCommand extends QuantCommand {
             }
             if (dateExtractor.isCorrect()) {
                 taskEntity.extractDate(dateExtractor);
+                if (taskEntity.getBody() == null) {
+                    taskEntity.setBody(ctx.getMessage("template.emptytaskbody", null, input.getLocale()));
+                }
                 taskEntity = dataService.save(taskEntity);
                 answer = ctx.getMessage("command.createtask.successful", null, input.getLocale());
                 if (isAfterState()) {

@@ -2,10 +2,7 @@ package ru.ifmo.quant.commands.edit;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.HandlingState;
-import ru.ifmo.quant.OutputMessage;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.QuantCommand;
 import ru.ifmo.quant.entities.TaskEntity;
 
@@ -33,6 +30,8 @@ public class TaskBodyEditCommand extends QuantCommand {
             answer = ctx.getMessage("command.edittask.succesfullend", null, input.getLocale());
             handlingProcess.clearParameters();
             handlingProcess.changeState(HandlingState.DEFAULT);
+            output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
+            return output;
         }
         output.add(new OutputMessage(input, answer));
         return output;

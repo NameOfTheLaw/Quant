@@ -12,11 +12,12 @@ import java.util.List;
  */
 public enum KeyboardEnum {
 
-    DEFAULT_KEYBOARD(new String[][] {{"/create", "/help"},{"/edit", "/today"}}),
-    CREATE_KEYBOARD(new String[][] {{"/createtask", "/createnotification"}}),
-    EDIT_KEYBOARD(new String[][] {{"/edittask", "/editnotification"}}),
+    DEFAULT(new String[][] {{"/create"}, {"/today", "/week"}, {"/edit", "/help"}}),
+    CREATE(new String[][] {{"/createtask", "/createnotification"}}),
+    EDIT(new String[][] {{"/edittask", "/editnotification"}}),
     CHOOSE_TASK_PARAMETER(new String[][] {{"/edittaskbody", "/edittasktime"}, {"/replacetask", "/removetask"}}),
-    CANCEL_KEYBOARD(new String[][] {{"/cancel"},{"/help"}});
+    CANCEL(new String[][] {{"/cancel"}}),
+    ADMIN(new String[][] {{"/botstatus"},{"/refreshDB"}});
 
     ReplyKeyboardMarkup keyboard;
 
@@ -30,7 +31,7 @@ public enum KeyboardEnum {
             rows.add(row);
         }
         keyboard = new ReplyKeyboardMarkup();
-        keyboard.setOneTimeKeyboad(true);
+        //keyboard.setOneTimeKeyboad(true);
         keyboard.setResizeKeyboard(true);
         keyboard.setKeyboard(rows);
     }
