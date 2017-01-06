@@ -83,6 +83,7 @@
     <!-- HandlingState and CommandExtractors-->
     <bean id="handingState" class="ru.ifmo.quant.HandlingState" scope="prototype">
         <property name="commandExtractor" ref="defaultExtractor"/>
+        <property name="currentExtractorName" value="defaultExtractor"/>
     </bean>
 
     <!-- HandlingProcess with defaultState-->

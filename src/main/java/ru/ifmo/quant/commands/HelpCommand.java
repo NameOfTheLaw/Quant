@@ -32,7 +32,8 @@ public class HelpCommand extends QuantCommand {
             String name = (String) propertyNames.nextElement();
             stringBuilder.append(name+" - "+commandsDescriptions.get(name)+"\n");
         }
-        output.add(new OutputMessage(input, stringBuilder.toString()).setKeyboard(KeyboardEnum.DEFAULT));
+        output.add(new OutputMessage(input, stringBuilder.toString()));
+        output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, input.getLocale())).setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }
 }

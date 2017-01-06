@@ -25,8 +25,9 @@ public class CreateTaskCommand extends QuantCommand {
 
         if (!isInit()) {
             output.add(new OutputMessage(input, ctx.getMessage("command.createtask.intro", null, input.getLocale()))
-                .setKeyboard(KeyboardEnum.CANCEL));
-            if (handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+                    .setKeyboard(KeyboardEnum.CANCEL));
+            if (!handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+                handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.CREATE);
                 handlingProcess.getHandlingState().getCommandExtractor().setExecutingCommand(this);
             }
@@ -47,6 +48,7 @@ public class CreateTaskCommand extends QuantCommand {
                 }
                 taskEntity = dataService.save(taskEntity);
                 answer = ctx.getMessage("command.createtask.successful", null, input.getLocale());
+                handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
                 if (isAfterState()) {
                     handlingProcess.changeState(getAfterState());
                 } else {
@@ -55,7 +57,6 @@ public class CreateTaskCommand extends QuantCommand {
                 try {
                     output.add(new OutputMessage(input, answer));
                     output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
-                    handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
                     return output;
                 } catch (BadCommandReturnException e) {
                     e.printStackTrace();

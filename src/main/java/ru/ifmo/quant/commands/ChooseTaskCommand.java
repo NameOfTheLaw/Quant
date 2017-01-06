@@ -36,6 +36,12 @@ public class ChooseTaskCommand extends QuantCommand {
                 }
                 output.add(new OutputMessage(input, stringBuilder.toString())
                     .setKeyboard(KeyboardEnum.CANCEL));
+                if (!handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+                    handlingProcess.clearParameters();
+                    handlingProcess.changeState(HandlingState.CREATE);
+                    handlingProcess.getHandlingState().getCommandExtractor().setExecutingCommand(this);
+                    setAfterState(HandlingState.NOTIFICATION_CREATE);
+                }
                 init();
                 return output;
             } else {
@@ -62,9 +68,9 @@ public class ChooseTaskCommand extends QuantCommand {
                         } catch (NullCommandArgumentException e) {
                             e.printStackTrace();
                         }
+                        return output;
                     } else {
                         stringBuilder.append(ctx.getMessage("command.edittask.change", null, input.getLocale()));
-                        handlingProcess.setParameter(HandlingProcess.TASK, task);
                         handlingProcess.changeState(HandlingState.CHOOSE_TASK_PARAMETER);
                         output.add(new OutputMessage(input, stringBuilder.toString())
                             .setKeyboard(KeyboardEnum.CHOOSE_TASK_PARAMETER));

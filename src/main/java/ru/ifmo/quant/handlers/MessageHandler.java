@@ -72,6 +72,7 @@ public class MessageHandler implements ApplicationContextAware {
         } catch (NullCommandArgumentException e) {
             output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, input.getLocale())));
         } catch (NullPointerException e) {
+            e.printStackTrace();
         } catch (SecurityException e) {
             output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, input.getLocale())));
         }
