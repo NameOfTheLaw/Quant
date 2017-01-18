@@ -1,6 +1,7 @@
 package ru.ifmo.quant.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.ifmo.quant.MessageAddress;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.entities.AccountEntity;
@@ -16,14 +17,13 @@ import java.util.List;
 /**
  * Created by andrey on 21.11.2016.
  */
+@Component(value = "dataService")
 public class DataServiceImpl implements DataService {
 
     @Autowired
     AccountRepository accountRepository;
-
     @Autowired
     NotificationRepository notificationRepository;
-
     @Autowired
     TaskRepository taskRepository;
 
@@ -55,10 +55,6 @@ public class DataServiceImpl implements DataService {
         accountRepository.delete(entity);
     }
 
-    public void deleteAllAccounts() {
-        accountRepository.deleteAll();
-    }
-
     public Long countAccountEntities() {
         return accountRepository.count();
     }
@@ -67,12 +63,20 @@ public class DataServiceImpl implements DataService {
         return notificationRepository.findOne(id);
     }
 
-    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period) {
-        return notificationRepository.findByServerDate(new Timestamp(serverDate.getTime()+period));
+    public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity, Timestamp serverDate, Long period) {
+        return notificationRepository.findByTaskAndDateBefore(taskEntity, new Timestamp(serverDate.getTime()+period));
     }
 
     public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity) {
         return notificationRepository.findByTask(taskEntity);
+    }
+
+    public List<NotificationEntity> findNotificationEntity(AccountEntity accountEntity, Timestamp serverDate, Long period) {
+        return notificationRepository.findByAccountAndDateBefore(accountEntity, new Timestamp(serverDate.getTime()+period));
+    }
+
+    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period) {
+        return notificationRepository.findByDateBefore(new Timestamp(serverDate.getTime()+period));
     }
 
     public NotificationEntity save(NotificationEntity entity) {
@@ -99,13 +103,12 @@ public class DataServiceImpl implements DataService {
         return taskRepository.findByAccount(accountEntity);
     }
 
-    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period) {
-        return taskRepository.findByServerDateBetween(serverDate, new Timestamp(serverDate.getTime()+period));
+    public List<TaskEntity> findTaskEntity(AccountEntity accountEntity, Timestamp serverDate, Long period) {
+        return taskRepository.findByAccountAndDateBefore(accountEntity, new Timestamp(serverDate.getTime()+period));
     }
 
-    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period, AccountEntity accountEntity) {
-        //return taskRepository.findByServerDateAndAccount_Id(new Timestamp(serverDate.getTime()+period), accountEntity.getId());
-        return taskRepository.findByAccountAndServerDateBetween(accountEntity, serverDate, new Timestamp(serverDate.getTime()+period));
+    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period) {
+        return taskRepository.findByDateBefore(new Timestamp(serverDate.getTime()+period));
     }
 
     public TaskEntity save(TaskEntity entity) {
@@ -124,7 +127,7 @@ public class DataServiceImpl implements DataService {
         return taskRepository.count();
     }
 
-    public List<TaskEntity> findTaskEntityForToday(Timestamp date, AccountEntity accountEntity) {
+    public List<TaskEntity> findTaskEntityForToday(AccountEntity accountEntity, Timestamp date) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(Calendar.MILLISECOND, 0);
@@ -134,10 +137,10 @@ public class DataServiceImpl implements DataService {
         Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
         calendar.add(Calendar.DATE, 1);
         Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
-        return taskRepository.findByAccountAndServerDateBetween(accountEntity, timeStart, timeEnd);
+        return taskRepository.findByAccountAndDateBetween(accountEntity, timeStart, timeEnd);
     }
 
-    public List<TaskEntity> findTaskEntityForWeek(Timestamp date, AccountEntity accountEntity) {
+    public List<TaskEntity> findTaskEntityForWeek(AccountEntity accountEntity, Timestamp date) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         //TODO: add timezone week. In US SUNDAY-MONDAY
@@ -150,6 +153,6 @@ public class DataServiceImpl implements DataService {
         Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
         calendar.add(Calendar.DATE, 7);
         Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
-        return taskRepository.findByAccountAndServerDateBetween(accountEntity, timeStart, timeEnd);
+        return taskRepository.findByAccountAndDateBetween(accountEntity, timeStart, timeEnd);
     }
 }

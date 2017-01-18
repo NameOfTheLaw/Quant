@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.extractors.CommandExtractor;
@@ -17,6 +18,7 @@ import java.util.Queue;
 /**
  * Created by andrey on 10.12.2016.
  */
+@Component
 @Aspect
 public class CommandAspect implements ApplicationContextAware {
 

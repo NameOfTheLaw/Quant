@@ -20,7 +20,7 @@ public class TaskEntity {
     private Long id;
     private String title;
     private String body;
-    private Timestamp serverDate;
+    private Timestamp date;
     private int specifiedTime;
     private AccountEntity account;
     private List<NotificationEntity> notifications;
@@ -59,12 +59,12 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "SERVER_DATE")
-    public Timestamp getServerDate() {
-        return serverDate;
+    public Timestamp getDate() {
+        return date;
     }
 
-    public void setServerDate(Timestamp serverDate) {
-        this.serverDate = serverDate;
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
     @Basic
@@ -133,12 +133,12 @@ public class TaskEntity {
             sdf = new SimpleDateFormat("dd.MM.yy");
         }
 
-        stringBuilder.append("_"+sdf.format(getServerDate())+"_");
+        stringBuilder.append("_"+sdf.format(getDate())+"_");
         return stringBuilder.toString();
     }
 
     public void extractDate(DateExtractor dateExtractor) {
-        setServerDate(dateExtractor.getDate());
+        setDate(dateExtractor.getDate());
         if (dateExtractor.isSpecifiedTime()) {
             setSpecifiedTime(this.SPECIFIED_TIME);
         } else {

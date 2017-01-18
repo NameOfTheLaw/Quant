@@ -27,6 +27,7 @@ public class StartCommand extends QuantCommand {
             AccountEntity accountEntity = new AccountEntity();
             accountEntity.insertKey(input.getMessageAddress());
             dataService.save(accountEntity);
+            process.setAccountEntity(accountEntity);
         } else {
             stringBuilder.append(ctx.getMessage("command.start.again", null, input.getLocale()));
         }

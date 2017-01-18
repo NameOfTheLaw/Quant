@@ -23,7 +23,7 @@ public class TodayCommand extends QuantCommand {
 
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess process) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(new Timestamp(System.currentTimeMillis()), process.getAccountEntity());
+        List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(process.getAccountEntity(), new Timestamp(System.currentTimeMillis()));
         StringBuilder stringBuilder = new StringBuilder();
 
         if (taskEntities.isEmpty()) {

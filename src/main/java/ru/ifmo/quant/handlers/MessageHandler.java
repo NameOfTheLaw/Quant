@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 import ru.ifmo.quant.*;
 import ru.ifmo.quant.commands.CommandFactory;
 import ru.ifmo.quant.commands.QuantCommand;
@@ -26,101 +27,71 @@ import java.util.Queue;
 /**
  * Created by andrey on 08.11.2016.
  */
+@Component
 public class MessageHandler implements ApplicationContextAware {
 
     private ApplicationContext ctx;
+    @Autowired
     private ProcessContainer processContainer;
+    @Autowired
     private DataService dataService;
-    private CommandFactory commandFactory;
+    @Autowired
     private MessagesPool messagesPool;
+    @Autowired
     private QuantAuthentificationManager authentificationManager;
 
     public Queue<QuantMessage> update(QuantMessage input) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        AccountEntity accountEntity = dataService.findAccountEntity(input);
-        if (accountEntity == null) {
-            accountEntity = new AccountEntity();
-            accountEntity.insertKey(input.getMessageAddress());
-            accountEntity = dataService.save(accountEntity);
+        AccountEntity account = dataService.findAccountEntity(input);
+        HandlingProcess process;
+        if (account == null) {
+            process = ctx.getBean("handlingProcess", HandlingProcess.class);
             QuantCommand command = ctx.getBean("startCommand", QuantCommand.class);
             try {
-                command.perform(input, null);
+                output.addAll(command.perform(input, process));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        HandlingProcess process = processContainer.getProcess(accountEntity);
-        if (process == null) {
-            process = ctx.getBean("handlingProcess", HandlingProcess.class);
-            process.setAccountEntity(accountEntity);
-            Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(accountEntity.getId()));
-            process.setAuthentication(response);
             processContainer.addProcess(process);
-        }
-        QuantCommand command = null;
-        try {
-            command = process.getHandlingState().extractCommand(input);
-        } catch (NoSuchCommandInContextException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL));
-        } catch (NoSuchCommandException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, input.getLocale())));
-        }
-        try {
-            output = command.perform(input, process);
-        } catch (BadCommandReturnException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, input.getLocale())));
-        } catch (NullCommandArgumentException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, input.getLocale())));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, input.getLocale())));
+        } else {
+            process = processContainer.getProcess(account);
+            if (process == null) {
+                process = createProcess(account);
+            }
+            QuantCommand command = null;
+            try {
+                command = process.getHandlingState().extractCommand(input);
+            } catch (NoSuchCommandInContextException e) {
+                output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL));
+            } catch (NoSuchCommandException e) {
+                output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, input.getLocale())));
+            }
+            try {
+                output = command.perform(input, process);
+            } catch (BadCommandReturnException e) {
+                output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, input.getLocale())));
+            } catch (NullCommandArgumentException e) {
+                output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, input.getLocale())));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, input.getLocale())));
+            }
         }
         messagesPool.addToPool(output);
         return output;
-    }
-
-    public ProcessContainer getProcessContainer() {
-        return processContainer;
-    }
-
-    public void setProcessContainer(ProcessContainer processContainer) {
-        this.processContainer = processContainer;
-    }
-
-    public CommandFactory getCommandFactory() {
-        return commandFactory;
-    }
-
-    public void setCommandFactory(CommandFactory commandFactory) {
-        this.commandFactory = commandFactory;
-    }
-
-    public DataService getDataService() {
-        return dataService;
-    }
-
-    public void setDataService(DataService dataService) {
-        this.dataService = dataService;
-    }
-
-    public MessagesPool getSendingPool() {
-        return messagesPool;
-    }
-
-    public void setSendingPool(MessagesPool sendingPool) {
-        this.messagesPool = sendingPool;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
     }
 
-    public QuantAuthentificationManager getAuthentificationManager() {
-        return authentificationManager;
-    }
-
-    public void setAuthentificationManager(QuantAuthentificationManager authentificationManager) {
-        this.authentificationManager = authentificationManager;
+    private HandlingProcess createProcess(AccountEntity account) {
+        HandlingProcess process = ctx.getBean("handlingProcess", HandlingProcess.class);
+        process.setAccountEntity(account);
+        Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(account.getId()));
+        process.setAuthentication(response);
+        processContainer.addProcess(process);
+        return process;
     }
 }

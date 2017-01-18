@@ -17,7 +17,7 @@ public class NotificationEntity {
     public final static int NO_SPECIFIED_TIME = 0;
 
     private Long id;
-    private Timestamp serverDate;
+    private Timestamp date;
     private int specifiedTime;
     private TaskEntity task;
 
@@ -35,12 +35,12 @@ public class NotificationEntity {
 
     @Basic
     @Column(name = "SERVER_DATE")
-    public Timestamp getServerDate() {
-        return serverDate;
+    public Timestamp getDate() {
+        return date;
     }
 
-    public void setServerDate(Timestamp serverDate) {
-        this.serverDate = serverDate;
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
     @Basic
@@ -86,7 +86,7 @@ public class NotificationEntity {
     }
 
     public void extractDate(DateExtractor dateExtractor) {
-        setServerDate(dateExtractor.getDate());
+        setDate(dateExtractor.getDate());
         if (dateExtractor.isSpecifiedTime()) {
             setSpecifiedTime(this.SPECIFIED_TIME);
         } else {
@@ -102,6 +102,6 @@ public class NotificationEntity {
         } else {
             sdf = new SimpleDateFormat("dd.MM.yy");
         }
-        return "_"+sdf.format(getServerDate())+"_";
+        return "_"+sdf.format(getDate())+"_";
     }
 }

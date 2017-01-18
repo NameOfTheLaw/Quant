@@ -40,22 +40,10 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <bean id="dataService" class="ru.ifmo.quant.dao.DataServiceImpl"/>
-
     <bean id="commandFactory" class="ru.ifmo.quant.commands.CommandFactory">
         <property name="commands">
             <util:properties id="myProps" location="classpath:commands.properties"/>
         </property>
-    </bean>
-
-    <bean id="processContainer" class="ru.ifmo.quant.ProcessContainer"/>
-
-    <bean id="messageHandler" class="ru.ifmo.quant.handlers.MessageHandler">
-        <property name="processContainer" ref="processContainer"/>
-        <property name="dataService" ref="dataService"/>
-        <property name="commandFactory" ref="commandFactory"/>
-        <property name="sendingPool" ref="sendingPool"/>
-        <property name="authentificationManager" ref="authentificationManager"/>
     </bean>
 
     <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
@@ -67,11 +55,6 @@
         <property name="messageHandler" ref="messageHandler"/>
     </bean>
 
-    <bean id="sendingPool" class="ru.ifmo.quant.MessagesPool">
-        <property name="telegramHandler" ref="telegramHandler"/>
-        <property name="dataService" ref="dataService"/>
-    </bean>
-
     <util:properties id="commandsDescriptions" location="classpath:commands-description.properties"/>
 
     <!-- MessageSource (for locale messages) -->
@@ -79,21 +62,6 @@
         <property name="basename" value="locale/messages"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
-
-    <!-- HandlingState and CommandExtractors-->
-    <bean id="handingState" class="ru.ifmo.quant.HandlingState" scope="prototype">
-        <property name="commandExtractor" ref="defaultExtractor"/>
-        <property name="currentExtractorName" value="defaultExtractor"/>
-    </bean>
-
-    <!-- HandlingProcess with defaultState-->
-    <bean id="handlingProcess" class="ru.ifmo.quant.HandlingProcess" scope="prototype">
-        <property name="handlingState" ref="handingState"/>
-    </bean>
-
-    <!-- Aspects declaration -->
-    <bean id="commandAspect" class="ru.ifmo.quant.aspects.CommandAspect"/>
-    <bean id="securityAspect" class="ru.ifmo.quant.security.SecurityAspect"/>
 
     <!-- AuthentificationManager with admins id's-->
     <bean id="authentificationManager" class="ru.ifmo.quant.security.QuantAuthentificationManager">

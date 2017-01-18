@@ -15,11 +15,8 @@ import java.util.List;
 public interface TaskRepository extends CrudRepository<TaskEntity, Long> {
 
     List<TaskEntity> findByAccount(AccountEntity accountEntity);
+    List<TaskEntity> findByAccountAndDateBefore(AccountEntity accountEntity, Timestamp time);
+    List<TaskEntity> findByAccountAndDateBetween(AccountEntity accountEntity, Timestamp timeStart, Timestamp timeEnd);
+    List<TaskEntity> findByDateBefore(Timestamp time);
 
-    @Query("select t FROM TaskEntity t where t.serverDate < :currPeriod and t.account.id = :accountId")
-    List<TaskEntity> findByServerDateAndAccount_Id(@Param("currPeriod") Timestamp currPeriod, @Param("accountId") Long accountId);
-
-    List<TaskEntity> findByAccountAndServerDateBetween(AccountEntity accountEntity, Timestamp timeStart, Timestamp timeEnd);
-
-    List<TaskEntity> findByServerDateBetween(Timestamp timeStart, Timestamp timeEnd);
 }

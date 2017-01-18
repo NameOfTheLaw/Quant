@@ -20,12 +20,13 @@ public interface DataService {
     public Iterable<AccountEntity> findAllAccountEntities();
     public AccountEntity save(AccountEntity entity);
     public void delete(AccountEntity entity);
-    public void deleteAllAccounts();
     public Long countAccountEntities();
 
     public NotificationEntity findNotificationEntity(Long id);
-    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period);
+    public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity, Timestamp serverDate, Long period);
     public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity);
+    public List<NotificationEntity> findNotificationEntity(AccountEntity accountEntity, Timestamp serverDate, Long period);
+    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period);
     public NotificationEntity save(NotificationEntity entity);
     public void delete(NotificationEntity entity);
     public void deleteAllNotifications();
@@ -33,13 +34,13 @@ public interface DataService {
 
     public TaskEntity findTaskEntity(Long id);
     public List<TaskEntity> findTaskEntity(AccountEntity accountEntity);
+    public List<TaskEntity> findTaskEntity(AccountEntity accountEntity, Timestamp serverDate, Long period);
     public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period);
-    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period, AccountEntity accountEntity);
     public TaskEntity save(TaskEntity entity);
     public void delete(TaskEntity entity);
     public void deleteAllTasks();
     public Long countTaskEntities();
 
-    public List<TaskEntity> findTaskEntityForToday(Timestamp date, AccountEntity accountEntity);
-    public List<TaskEntity> findTaskEntityForWeek(Timestamp date, AccountEntity accountEntity);
+    public List<TaskEntity> findTaskEntityForToday(AccountEntity accountEntity, Timestamp date);
+    public List<TaskEntity> findTaskEntityForWeek(AccountEntity accountEntity, Timestamp date);
 }
