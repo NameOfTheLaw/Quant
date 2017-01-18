@@ -24,9 +24,9 @@ public class CreateTaskCommand extends QuantCommand {
         String answer;
 
         if (!isInit()) {
-            output.add(new OutputMessage(input, ctx.getMessage("command.createtask.intro", null, input.getLocale()))
+            output.add(new OutputMessage(input, ctx.getMessage("command.createtask.intro", null, handlingProcess.getAccountEntity().LOCALE))
                     .setKeyboard(KeyboardEnum.CANCEL));
-            if (!handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+            if (input.getText().equals(CT_COMMAND)) {
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.CREATE);
                 handlingProcess.getHandlingState().getCommandExtractor().setExecutingCommand(this);
@@ -44,10 +44,10 @@ public class CreateTaskCommand extends QuantCommand {
             if (dateExtractor.isCorrect()) {
                 taskEntity.extractDate(dateExtractor);
                 if (taskEntity.getBody() == null) {
-                    taskEntity.setBody(ctx.getMessage("template.emptytaskbody", null, input.getLocale()));
+                    taskEntity.setBody(ctx.getMessage("template.emptytaskbody", null, handlingProcess.getAccountEntity().LOCALE));
                 }
                 taskEntity = dataService.save(taskEntity);
-                answer = ctx.getMessage("command.createtask.successful", null, input.getLocale());
+                answer = ctx.getMessage("command.createtask.successful", null, handlingProcess.getAccountEntity().LOCALE);
                 handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
                 if (isAfterState()) {
                     handlingProcess.changeState(getAfterState());
@@ -64,7 +64,7 @@ public class CreateTaskCommand extends QuantCommand {
                     e.printStackTrace();
                 }
             } else {
-                answer = ctx.getMessage("command.createtask.confirmation", new Object[]{taskEntity.getBody()}, input.getLocale());
+                answer = ctx.getMessage("command.createtask.confirmation", new Object[]{taskEntity.getBody()}, handlingProcess.getAccountEntity().LOCALE);
             }
             handlingProcess.setParameter(HandlingProcess.TASK, taskEntity);
         }

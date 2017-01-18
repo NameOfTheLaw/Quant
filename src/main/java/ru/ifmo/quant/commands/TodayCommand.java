@@ -21,15 +21,15 @@ import java.util.Queue;
 @Scope("prototype")
 public class TodayCommand extends QuantCommand {
 
-    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess process) {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(process.getAccountEntity(), new Timestamp(System.currentTimeMillis()));
+        List<TaskEntity> taskEntities = dataService.findTaskEntityForToday(handlingProcess.getAccountEntity(), new Timestamp(System.currentTimeMillis()));
         StringBuilder stringBuilder = new StringBuilder();
 
         if (taskEntities.isEmpty()) {
-            stringBuilder.append(ctx.getMessage("command.today.empty", null, input.getLocale()));
+            stringBuilder.append(ctx.getMessage("command.today.empty", null, handlingProcess.getAccountEntity().LOCALE));
         } else {
-            stringBuilder.append(ctx.getMessage("command.today.intro", null, input.getLocale()));
+            stringBuilder.append(ctx.getMessage("command.today.intro", null, handlingProcess.getAccountEntity().LOCALE));
             for (TaskEntity taskEntity : taskEntities) {
                 stringBuilder.append(">" + taskEntity + "\n");
             }

@@ -26,6 +26,7 @@ public class HandlingState implements ApplicationContextAware {
     public static final String NOTIFICATION_EDIT = "editNotification";
     public static final String CREATE = "create";
     public static final String NOTIFICATION_CREATE = "createNotification";
+    public static final String ACCOUNT_SETTINGS = "accountSettings";
     private static final String EXRACTOR_SUFFIX = "Extractor";
     private String currentExtractorName = DEFAULT+EXRACTOR_SUFFIX;
 

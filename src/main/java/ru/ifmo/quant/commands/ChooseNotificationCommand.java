@@ -27,14 +27,14 @@ public class ChooseNotificationCommand extends QuantCommand {
         if (!isInit()) {
             notificationsList = dataService.findNotificationEntity(handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class));
             if (!notificationsList.isEmpty()) {
-                stringBuilder.append(ctx.getMessage("command.editnotification.intro", null, input.getLocale())+"\n");
+                stringBuilder.append(ctx.getMessage("command.editnotification.intro", null, handlingProcess.getAccountEntity().LOCALE)+"\n");
                 int i = 0;
                 for (NotificationEntity notificationEntity: notificationsList) {
                     i++;
                     stringBuilder.append(i+") "+notificationEntity.toString()+"\n");
                 }
             } else {
-                stringBuilder.append(ctx.getMessage("command.editnotification.nonotifications", null, input.getLocale()));
+                stringBuilder.append(ctx.getMessage("command.editnotification.nonotifications", null, handlingProcess.getAccountEntity().LOCALE));
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
             }
@@ -48,23 +48,23 @@ public class ChooseNotificationCommand extends QuantCommand {
                     e.printStackTrace();
                 }
                 if (notification != null) {
-                    stringBuilder.append(ctx.getMessage("command.editnotification.edittime", null, input.getLocale()));
+                    stringBuilder.append(ctx.getMessage("command.editnotification.edittime", null, handlingProcess.getAccountEntity().LOCALE));
                     handlingProcess.setParameter(HandlingProcess.NOTIFICATION, notification);
                 } else {
-                    stringBuilder.append(ctx.getMessage("command.editnotification.outofindex", null, input.getLocale()));
+                    stringBuilder.append(ctx.getMessage("command.editnotification.outofindex", null, handlingProcess.getAccountEntity().LOCALE));
                 }
             } else {
                 DateExtractor dateExtractor = new DateExtractor(input.getText());
                 if (dateExtractor.isCorrect()) {
                     notification.extractDate(dateExtractor);
                     dataService.save(notification);
-                    stringBuilder.append(ctx.getMessage("command.editnotification.succesfullend", null, input.getLocale()));
+                    stringBuilder.append(ctx.getMessage("command.editnotification.succesfullend", null, handlingProcess.getAccountEntity().LOCALE));
                     handlingProcess.clearParameters();
                     handlingProcess.changeState(HandlingState.DEFAULT);
                     output.add(new OutputMessage(input, stringBuilder.toString()).setKeyboard(KeyboardEnum.DEFAULT));
                     return output;
                 } else {
-                    stringBuilder.append(ctx.getMessage("command.editnotification.edittime.toconfirm", null, input.getLocale()));
+                    stringBuilder.append(ctx.getMessage("command.editnotification.edittime.toconfirm", null, handlingProcess.getAccountEntity().LOCALE));
                 }
             }
         }

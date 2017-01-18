@@ -22,12 +22,12 @@ public class TaskBodyEditCommand extends QuantCommand {
         TaskEntity taskEntity = handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class);
         String answer = null;
         if (!isInit()) {
-            ctx.getMessage("command.edittask.editbody.intro", null, input.getLocale());
+            ctx.getMessage("command.edittask.editbody.intro", null, handlingProcess.getAccountEntity().LOCALE);
             init();
         } else {
             taskEntity.setBody(input.getText());
             dataService.save(taskEntity);
-            answer = ctx.getMessage("command.edittask.succesfullend", null, input.getLocale());
+            answer = ctx.getMessage("command.edittask.succesfullend", null, handlingProcess.getAccountEntity().LOCALE);
             handlingProcess.clearParameters();
             handlingProcess.changeState(HandlingState.DEFAULT);
             output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));

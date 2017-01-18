@@ -23,7 +23,7 @@ public class TaskReplaceCommand extends QuantCommand {
         String answer = null;
 
         if (!isInit()) {
-            answer = ctx.getMessage("command.edittask.replacetask.intro", null, input.getLocale());
+            answer = ctx.getMessage("command.edittask.replacetask.intro", null, handlingProcess.getAccountEntity().LOCALE);
             init();
         } else {
             DateExtractor dateExtractor = new DateExtractor(input.getText());
@@ -34,13 +34,13 @@ public class TaskReplaceCommand extends QuantCommand {
             if (dateExtractor.isCorrect()) {
                 replaceTaskEntity.extractDate(dateExtractor);
                 dataService.save(replaceTaskEntity);
-                answer = ctx.getMessage("command.edittask.succesfullend", null, input.getLocale());
+                answer = ctx.getMessage("command.edittask.succesfullend", null, handlingProcess.getAccountEntity().LOCALE);
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
                 output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
                 return output;
             } else {
-                answer = ctx.getMessage("command.edittask.replacetask", new Object[]{taskEntity.getBody()}, input.getLocale());
+                answer = ctx.getMessage("command.edittask.replacetask", new Object[]{taskEntity.getBody()}, handlingProcess.getAccountEntity().LOCALE);
             }
         }
         output.add(new OutputMessage(input, answer));

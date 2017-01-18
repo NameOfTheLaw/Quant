@@ -15,19 +15,19 @@ public class ChooseTaskParameterExtractor extends CommandExtractor {
     public QuantCommand extract(QuantMessage message) {
         QuantCommand command = null;
         if (isExecuting()) command = getExecutingCommand();
-        if (message.getText().equals(ctx.getMessage("command.edittask.editbody", null, message.getLocale()))) {
+        if (message.getText().equals(EDIT_BODY_COMMAND)) {
             command = ctx.getBean("taskBodyEditCommand", QuantCommand.class);
             setExecutingCommand(command);
         }
-        if (message.getText().equals(ctx.getMessage("command.edittask.edittime", null, message.getLocale()))) {
+        if (message.getText().equals(EDIT_TIME_COMMAND)) {
             command = ctx.getBean("taskTimeEditCommand", QuantCommand.class);
             setExecutingCommand(command);
         }
-        if (message.getText().equals(ctx.getMessage("command.edittask.replacetask", null, message.getLocale()))) {
+        if (message.getText().equals(REPLACE_TASK_COMMAND)) {
             command = ctx.getBean("taskReplaceCommand", QuantCommand.class);
             setExecutingCommand(command);
         }
-        if (message.getText().equals(ctx.getMessage("command.edittask.removetask", null, message.getLocale()))) {
+        if (message.getText().equals(REMOVE_TASK_COMMAND)) {
             command = ctx.getBean("removeTaskCommand", QuantCommand.class);
             setExecutingCommand(command);
         }

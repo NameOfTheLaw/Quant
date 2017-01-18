@@ -20,20 +20,11 @@ import java.util.*;
 @Scope("prototype")
 public class HelpCommand extends QuantCommand {
 
-    @Autowired
-    private Properties commandsDescriptions;
-
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        output.add(new OutputMessage(input, ctx.getMessage("command.help", null, input.getLocale())));
-        StringBuilder stringBuilder = new StringBuilder();
-        Enumeration propertyNames = commandsDescriptions.propertyNames();
-        while (propertyNames.hasMoreElements()) {
-            String name = (String) propertyNames.nextElement();
-            stringBuilder.append(name+" - "+commandsDescriptions.get(name)+"\n");
-        }
-        output.add(new OutputMessage(input, stringBuilder.toString()));
-        output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, input.getLocale())).setKeyboard(KeyboardEnum.DEFAULT));
+        output.add(new OutputMessage(input, ctx.getMessage("command.help", null, handlingProcess.getAccountEntity().LOCALE)));
+        output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, handlingProcess.getAccountEntity().LOCALE))
+            .setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }
 }

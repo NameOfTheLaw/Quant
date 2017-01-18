@@ -5,11 +5,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.commands.QuantCommand;
+import ru.ifmo.quant.commands.QuantCommandNames;
 
 /**
  * Created by andrey on 04.12.2016.
  */
-public abstract class CommandExtractor implements ApplicationContextAware {
+public abstract class CommandExtractor extends QuantCommandNames implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
     protected QuantCommand executingCommand;

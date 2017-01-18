@@ -28,7 +28,7 @@ public class ChooseTaskCommand extends QuantCommand {
         if (!isInit()) {
             tasksList = dataService.findTaskEntity(handlingProcess.getAccountEntity());
             if (!tasksList.isEmpty()) {
-                stringBuilder.append(ctx.getMessage("command.edittask.intro", null, input.getLocale())+"\n");
+                stringBuilder.append(ctx.getMessage("command.edittask.intro", null, handlingProcess.getAccountEntity().LOCALE)+"\n");
                 int i = 0;
                 for (TaskEntity task: tasksList) {
                     i++;
@@ -36,7 +36,7 @@ public class ChooseTaskCommand extends QuantCommand {
                 }
                 output.add(new OutputMessage(input, stringBuilder.toString())
                     .setKeyboard(KeyboardEnum.CANCEL));
-                if (!handlingProcess.getHandlingState().getCurrentExtractorName().equals(HandlingState.CREATE)) {
+                if (input.getText().equals(CN_COMMAND)) {
                     handlingProcess.clearParameters();
                     handlingProcess.changeState(HandlingState.CREATE);
                     handlingProcess.getHandlingState().getCommandExtractor().setExecutingCommand(this);
@@ -45,7 +45,7 @@ public class ChooseTaskCommand extends QuantCommand {
                 init();
                 return output;
             } else {
-                stringBuilder.append(ctx.getMessage("command.edittask.notasks", null, input.getLocale()));
+                stringBuilder.append(ctx.getMessage("command.edittask.notasks", null, handlingProcess.getAccountEntity().LOCALE));
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
             }
@@ -70,14 +70,14 @@ public class ChooseTaskCommand extends QuantCommand {
                         }
                         return output;
                     } else {
-                        stringBuilder.append(ctx.getMessage("command.edittask.change", null, input.getLocale()));
+                        stringBuilder.append(ctx.getMessage("command.edittask.change", null, handlingProcess.getAccountEntity().LOCALE));
                         handlingProcess.changeState(HandlingState.CHOOSE_TASK_PARAMETER);
                         output.add(new OutputMessage(input, stringBuilder.toString())
                             .setKeyboard(KeyboardEnum.CHOOSE_TASK_PARAMETER));
                         return output;
                     }
                 } else {
-                    stringBuilder.append(ctx.getMessage("command.edittask.outoftasksindex", null, input.getLocale()));
+                    stringBuilder.append(ctx.getMessage("command.edittask.outoftasksindex", null, handlingProcess.getAccountEntity().LOCALE));
                 }
             }
         }

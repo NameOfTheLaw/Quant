@@ -10,7 +10,6 @@ public class OutputMessage extends QuantMessage {
     public OutputMessage() {}
 
     public OutputMessage(QuantMessage input, String text) {
-        setLocale(input.getLocale());
         setMessageAddress(input.getMessageAddress());
         setText(text);
     }

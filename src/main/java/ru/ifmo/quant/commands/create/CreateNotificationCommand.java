@@ -23,7 +23,7 @@ public class CreateNotificationCommand extends QuantCommand {
         DateExtractor dateExtractor = new DateExtractor(input.getText());
         String answer;
         if (!isInit()) {
-            output.add(new OutputMessage(input, ctx.getMessage("command.createnotification.intro", null, input.getLocale()))
+            output.add(new OutputMessage(input, ctx.getMessage("command.createnotification.intro", null, handlingProcess.getAccountEntity().LOCALE))
                 .setKeyboard(KeyboardEnum.CANCEL));
             init();
             return output;
@@ -37,13 +37,13 @@ public class CreateNotificationCommand extends QuantCommand {
             if (dateExtractor.isCorrect()) {
                 notificationEntity.extractDate(dateExtractor);
                 dataService.save(notificationEntity);
-                answer = ctx.getMessage("command.createnotification.successful", null, input.getLocale());
+                answer = ctx.getMessage("command.createnotification.successful", null, handlingProcess.getAccountEntity().LOCALE);
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
                 output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
                 return output;
             } else {
-                answer = ctx.getMessage("command.createnotification.confirmation", null, input.getLocale());
+                answer = ctx.getMessage("command.createnotification.confirmation", null, handlingProcess.getAccountEntity().LOCALE);
             }
         }
         output.add(new OutputMessage(input, answer));

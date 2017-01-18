@@ -3,6 +3,8 @@ package ru.ifmo.quant;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,8 +15,8 @@ public abstract class QuantMessage {
 
     protected String text;
     protected MessageAddress messageAddress;
-    protected Locale locale = Locale.US;
     protected KeyboardEnum keyboard;
+    protected Long date;
 
     public String getText() {
         return text;
@@ -30,14 +32,6 @@ public abstract class QuantMessage {
 
     public void setMessageAddress (MessageAddress messageAddresses) {
         this.messageAddress = messageAddresses;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     public boolean hasText() {
@@ -58,6 +52,18 @@ public abstract class QuantMessage {
         return this;
     }
 
+    public Long getDate() {
+        return date;
+    }
+
+    public void setDate(Long date) {
+        this.date = date;
+    }
+
+    public void setDate(Integer date) {
+        this.date = date.longValue();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!o.getClass().equals(this.getClass())) return false;
@@ -65,7 +71,6 @@ public abstract class QuantMessage {
         QuantMessage message = (QuantMessage) o;
         if (!message.getText().equals(this.getText())) return false;
         if (!message.getMessageAddress().equals(this.getMessageAddress())) return false;
-        if (!message.getLocale().equals(this.getLocale())) return false;
         return true;
     }
 
@@ -73,7 +78,6 @@ public abstract class QuantMessage {
     public int hashCode() {
         int result = text != null ? text.hashCode() : 0;
         result = 31 * result + (messageAddress != null ? messageAddress.hashCode() : 0);
-        result = 31 * result + (locale != null ? locale.hashCode() : 0);
         return result;
     }
 }

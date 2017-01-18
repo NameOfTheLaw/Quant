@@ -15,6 +15,7 @@ public class InputMessage extends QuantMessage {
     public InputMessage(Update update) {
         String text = update.getMessage().getText().replaceAll("\\s+", " ").trim().toLowerCase();
         setText(text);
+        setDate(update.getMessage().getDate());
         setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, update.getMessage().getChatId()));
     }
 

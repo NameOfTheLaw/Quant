@@ -12,12 +12,14 @@ import java.util.List;
  */
 public enum KeyboardEnum {
 
-    DEFAULT(new String[][] {{"/ct", "/cn"}, {"/today", "/week"}, {"/edit", "/help"}}),
+    DEFAULT(new String[][] {{"/ct", "/cn"}, {"/today", "/week", "/tasks"}, {"/edit", "/settings", "/help"}}),
     CREATE(new String[][] {{"/createtask", "/createnotification"}}),
     EDIT(new String[][] {{"/edittask", "/editnotification"}}),
     CHOOSE_TASK_PARAMETER(new String[][] {{"/edittaskbody", "/edittasktime"}, {"/replacetask", "/removetask"}}),
     CANCEL(new String[][] {{"/cancel"}}),
-    ADMIN(new String[][] {{"/botstatus", "/refreshDB"},{"/cancel"}});
+    ADMIN(new String[][] {{"/botstatus", "/refreshDB"},{"/cancel"}}),
+    ACCOUNT_SETTINGS(new String[][] {{"/changelanguage"}}),
+    CHANGE_LANGUAGE(new String[][] {{"/en", "/ru"}});
 
     ReplyKeyboardMarkup keyboard;
 

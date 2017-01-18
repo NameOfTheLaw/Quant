@@ -62,20 +62,20 @@ public class MessageHandler implements ApplicationContextAware {
             try {
                 command = process.getHandlingState().extractCommand(input);
             } catch (NoSuchCommandInContextException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, input.getLocale())).setKeyboard(KeyboardEnum.CANCEL));
+                output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, account.LOCALE)).setKeyboard(KeyboardEnum.CANCEL));
             } catch (NoSuchCommandException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, input.getLocale())));
+                output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, account.LOCALE)));
             }
             try {
                 output = command.perform(input, process);
             } catch (BadCommandReturnException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, input.getLocale())));
+                output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, account.LOCALE)));
             } catch (NullCommandArgumentException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, input.getLocale())));
+                output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, account.LOCALE)));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } catch (SecurityException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, input.getLocale())));
+                output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, account.LOCALE)));
             }
         }
         messagesPool.addToPool(output);

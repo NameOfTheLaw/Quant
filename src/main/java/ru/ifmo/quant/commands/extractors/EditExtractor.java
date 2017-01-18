@@ -15,12 +15,12 @@ public class EditExtractor extends CommandExtractor {
 
     public QuantCommand extract(QuantMessage message) {
         if (isExecuting()) return getExecutingCommand();
-        if (message.getText().equals(ctx.getMessage("command.edittask", null, message.getLocale()))) {
+        if (message.getText().equals(EDIT_TASK_COMMAND)) {
             QuantCommand command = ctx.getBean("chooseTaskCommand", QuantCommand.class);
             setExecutingCommand(command);
             return command;
         }
-        if (message.getText().equals(ctx.getMessage("command.editnotification", null, message.getLocale()))) {
+        if (message.getText().equals(EDIT_NOTIFICATION_COMMAND)) {
             QuantCommand command = ctx.getBean("chooseTaskCommand", QuantCommand.class);
             command.setAfterState(HandlingState.NOTIFICATION_EDIT);
             setExecutingCommand(command);

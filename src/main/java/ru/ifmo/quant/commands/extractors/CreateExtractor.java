@@ -17,12 +17,12 @@ public class CreateExtractor extends CommandExtractor {
         if (isExecuting()) return getExecutingCommand();
 
         QuantCommand command;
-        if (message.getText().equals(ctx.getMessage("command.createtask", null, message.getLocale()))) {
+        if (message.getText().equals(CREATE_TASK_COMMAND)) {
             command = ctx.getBean("createTaskCommand", QuantCommand.class);
             setExecutingCommand(command);
             return command;
         }
-        if (message.getText().equals(ctx.getMessage("command.createnotification", null, message.getLocale()))) {
+        if (message.getText().equals(CREATE_NOTIFICATION_COMMAND)) {
             command = ctx.getBean("chooseTaskCommand", QuantCommand.class);
             command.setAfterState(HandlingState.NOTIFICATION_CREATE);
             setExecutingCommand(command);

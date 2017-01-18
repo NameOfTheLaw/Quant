@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import ru.ifmo.quant.HandlingProcess;
+import ru.ifmo.quant.QuantLocale;
 import ru.ifmo.quant.QuantMessage;
 import ru.ifmo.quant.dao.DataService;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
@@ -15,7 +16,7 @@ import java.util.Queue;
 /**
  * Created by andrey on 09.11.2016.
  */
-public abstract class QuantCommand implements ApplicationContextAware {
+public abstract class QuantCommand extends QuantCommandNames implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
     protected boolean init = false;
@@ -23,6 +24,8 @@ public abstract class QuantCommand implements ApplicationContextAware {
 
     @Autowired
     protected DataService dataService;
+    @Autowired
+    protected QuantLocale quantLocale;
 
     public abstract Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException;
 
