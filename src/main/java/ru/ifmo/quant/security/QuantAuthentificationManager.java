@@ -1,6 +1,7 @@
 package ru.ifmo.quant.security;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,18 +17,19 @@ import java.util.Set;
 /**
  * Created by andrey on 25.12.2016.
  */
+@Component("authentificationManager")
 public class QuantAuthentificationManager implements AuthenticationManager, InitializingBean {
 
     static final List<GrantedAuthority> ADMIN_AUTHORITIES = new ArrayList<GrantedAuthority>();
     static final List<GrantedAuthority> USER_AUTHORITIES = new ArrayList<GrantedAuthority>();
     static final String ADMIN = "ADMIN";
     static final String USER = "USER";
+    @Value("#{'${admin.ids}'.split(',')}")
     private Set<Long> adminsIds;
 
     public void afterPropertiesSet() throws Exception {
         ADMIN_AUTHORITIES.add(new SimpleGrantedAuthority(ADMIN));
         USER_AUTHORITIES.add(new SimpleGrantedAuthority(USER));
-
     }
 
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

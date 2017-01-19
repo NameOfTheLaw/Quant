@@ -2,6 +2,8 @@ package ru.ifmo.quant.handlers.telegram;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,20 +14,24 @@ import ru.ifmo.quant.handlers.MessageHandler;
 /**
  * Created by andrey on 05.11.2016.
  */
+@Component
 public class TelegramHandler extends TelegramLongPollingBot implements InitializingBean {
 
+    @Value("${telegram.botusername}")
     private String botName;
+    @Value("${telegram.bottoken}")
     private String botToken;
-    private TelegramBotsApi telegramBotsApi;
+    @Autowired
     private MessageHandler messageHandler;
+    private TelegramBotsApi telegramBotsApi;
 
     public void afterPropertiesSet() throws Exception {
+        telegramBotsApi = new TelegramBotsApi();
         telegramBotsApi.registerBot(this);
     }
 
     public void onUpdateReceived(Update update) {
-        QuantMessage message = new InputMessage(update);
-        messageHandler.update(message);
+        messageHandler.update(new InputMessage(update));
     }
 
     public String getBotUsername() {
@@ -36,31 +42,4 @@ public class TelegramHandler extends TelegramLongPollingBot implements Initializ
         return botToken;
     }
 
-    public String getBotName() {
-        return botName;
-    }
-
-    public void setBotName(String botName) {
-        this.botName = botName;
-    }
-
-    public void setBotToken(String botToken) {
-        this.botToken = botToken;
-    }
-
-    public TelegramBotsApi getTelegramBotsApi() {
-        return telegramBotsApi;
-    }
-
-    public void setTelegramBotsApi(TelegramBotsApi telegramBotsApi) {
-        this.telegramBotsApi = telegramBotsApi;
-    }
-
-    public MessageHandler getMessageHandler() {
-        return messageHandler;
-    }
-
-    public void setMessageHandler(MessageHandler messageHandler) {
-        this.messageHandler = messageHandler;
-    }
 }

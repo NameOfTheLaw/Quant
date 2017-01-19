@@ -25,7 +25,7 @@ public class AllTasksCommand extends QuantCommand {
         List<TaskEntity> tasks = dataService.findTaskEntity(handlingProcess.getAccountEntity());
         StringBuilder stringBuilder = new StringBuilder();
         if (!tasks.isEmpty()) {
-            output.add(new OutputMessage(input, ctx.getMessage("command.alltasks.intro", null, handlingProcess.getAccountEntity().LOCALE)).setKeyboard(KeyboardEnum.DEFAULT));
+            stringBuilder.append(ctx.getMessage("command.alltasks.intro", null, handlingProcess.getAccountEntity().LOCALE));
             for (TaskEntity task : tasks) {
                 stringBuilder.append("> " + task.toString() + "\n");
             }

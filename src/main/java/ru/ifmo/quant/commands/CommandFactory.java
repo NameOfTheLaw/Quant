@@ -2,8 +2,10 @@ package ru.ifmo.quant.commands;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,21 +17,12 @@ import java.util.Properties;
  *
  * Created by andrey on 09.11.2016.
  */
-public class CommandFactory implements InitializingBean, ApplicationContextAware {
+@Component
+public class CommandFactory implements ApplicationContextAware {
 
-    private Properties commands;
-    private Map<String,String> commandMap;
     private ApplicationContext ctx;
-
-    public void afterPropertiesSet() throws Exception {
-        Enumeration enumeration = commands.propertyNames();
-        commandMap = new HashMap<String, String>();
-        while (enumeration.hasMoreElements()) {
-            String alias = (String) enumeration.nextElement();
-            commandMap.put(alias, commands.getProperty(alias));
-        }
-        commands.clear();
-    }
+    @Value("#{defaultCommands}")
+    private Map<String,String> commandMap;
 
     public QuantCommand build(String body) {
         if (body != null) {
@@ -47,14 +40,6 @@ public class CommandFactory implements InitializingBean, ApplicationContextAware
         } else {
             throw new NullPointerException();
         }
-    }
-
-    public Properties getCommands() {
-        return commands;
-    }
-
-    public void setCommands(Properties commands) {
-        this.commands = commands;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

@@ -2,6 +2,7 @@ package ru.ifmo.quant;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,22 +30,20 @@ import java.util.*;
 @Component
 public class MessagesPool implements ApplicationContextAware {
 
-    private static final int MESSAGES_POOL_REFRESHING_TIME = 100;
-    private static final int MESSAGES_POOL_SIZE = 6;
-    private static final int NOTIFICATION_GET_TIME = 1000;
-    private static final Long NOTIFICATION_LOAD_PERIOD = 2000l;
-    private static final int TASK_GET_TIME = 2000;
-    private static final Long TASK_LOAD_PERIOD = 2000l;
-    private static final String TASKS_PROGRESS_NOTICING_CRON = "0 * 20 * * *"; //every day at 20:00
-
     private ApplicationContext ctx;
     @Autowired
     private TelegramHandler telegramHandler;
     @Autowired
     private DataService dataService;
+    @Value("${messagespool.refreshingsize}")
+    private int MESSAGES_POOL_SIZE;
+    @Value("${messagespool.notificationloadperiod}")
+    private Long NOTIFICATION_LOAD_PERIOD;
+    @Value("${messagespool.taskloadperiod}")
+    private Long TASK_LOAD_PERIOD;
     private Queue<QuantMessage> messagesPool = new LinkedList<QuantMessage>();
 
-    @Scheduled(fixedRate = MESSAGES_POOL_REFRESHING_TIME)
+    @Scheduled(fixedRateString = "${messagespool.refreshingtime}")
     private void cleanPool() {
         for (int i = 0; i<MESSAGES_POOL_SIZE && i<messagesPool.size(); i++) {
             QuantMessage message = messagesPool.poll();
@@ -63,7 +62,7 @@ public class MessagesPool implements ApplicationContextAware {
         }
     }
 
-    @Scheduled(fixedRate = NOTIFICATION_GET_TIME)
+    @Scheduled(fixedRateString = "${messagespool.notificationgettime}")
     public void addNotificationMessagesToPool() {
         List<NotificationEntity> notifications = dataService.findNotificationEntity(new Timestamp(System.currentTimeMillis()), NOTIFICATION_LOAD_PERIOD);
         if (notifications!=null) {
@@ -78,7 +77,7 @@ public class MessagesPool implements ApplicationContextAware {
         }
     }
 
-    @Scheduled(fixedRate = TASK_GET_TIME)
+    @Scheduled(fixedRateString = "${messagespool.taskgettime}")
     public void addTaskMessagesToPool() {
         List<TaskEntity> taskEntities = dataService.findTaskEntity(new Timestamp(System.currentTimeMillis()), TASK_LOAD_PERIOD);
         if (taskEntities!=null) {
@@ -91,11 +90,6 @@ public class MessagesPool implements ApplicationContextAware {
                 addToPool(message);
             }
         }
-    }
-
-    @Scheduled(cron = TASKS_PROGRESS_NOTICING_CRON)
-    public void addProgressNotificationToPool() {
-        //TODO: realise tasksProgressNoticing
     }
 
     public void addToPool(QuantMessage message) {

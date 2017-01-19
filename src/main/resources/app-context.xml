@@ -17,10 +17,10 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${driverClassName}"/>
-        <property name="url" value="${url}"/>
-        <property name="username" value="${username}"/>
-        <property name="password" value="${password}"/>
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -40,34 +40,12 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <bean id="commandFactory" class="ru.ifmo.quant.commands.CommandFactory">
-        <property name="commands">
-            <util:properties id="myProps" location="classpath:commands.properties"/>
-        </property>
-    </bean>
-
-    <bean id="telegramHandler" class="ru.ifmo.quant.handlers.telegram.TelegramHandler">
-        <property name="botName" value="${telegramBotUsername}"/>
-        <property name="botToken" value="${telegramBotToken}"/>
-        <property name="telegramBotsApi">
-            <bean class="org.telegram.telegrambots.TelegramBotsApi"/>
-        </property>
-        <property name="messageHandler" ref="messageHandler"/>
-    </bean>
+    <util:properties id="defaultCommands" location="classpath:commands.properties"/>
 
     <!-- MessageSource (for locale messages) -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="locale/messages"/>
         <property name="defaultEncoding" value="UTF-8"/>
-    </bean>
-
-    <!-- AuthentificationManager with admins id's-->
-    <bean id="authentificationManager" class="ru.ifmo.quant.security.QuantAuthentificationManager">
-        <property name="adminsIds">
-            <set>
-                <value>1</value>
-            </set>
-        </property>
     </bean>
 
     <!-- Activates aop autoproxy -->
