@@ -16,5 +16,7 @@ public abstract class QuantCommandNames {
     protected static final String CREATE_NOTIFICATION_COMMAND = "/createnotification";
     protected static final String EDIT_TASK_COMMAND = "/edittask";
     protected static final String EDIT_NOTIFICATION_COMMAND = "/editnotification";
+    protected static final String SETTINGS_COMMAND = "/settings";
+    protected static final String CANCEL_COMMAND = "/cancel";
 
 }

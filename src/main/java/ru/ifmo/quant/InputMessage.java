@@ -1,5 +1,6 @@
 package ru.ifmo.quant;
 
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.ArrayList;
@@ -13,10 +14,15 @@ public class InputMessage extends QuantMessage {
     public InputMessage() {}
 
     public InputMessage(Update update) {
-        String text = update.getMessage().getText().replaceAll("\\s+", " ").trim().toLowerCase();
-        setText(text);
-        setDate(update.getMessage().getDate());
-        setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, update.getMessage().getChatId()));
+        Message message = update.getMessage();
+        setDate(message.getDate());
+        if (message.hasText()) {
+            setText(message.getText().replaceAll("\\s+", " ").trim().toLowerCase());
+        }
+        if (message.getLocation()!=null) {
+            setLocation(message.getLocation());
+        }
+        setMessageAddress(new MessageAddress(MessageAddress.TELEGRAM_ALIAS, message.getChatId()));
     }
 
 }

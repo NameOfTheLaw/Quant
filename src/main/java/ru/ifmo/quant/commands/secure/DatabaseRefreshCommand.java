@@ -19,7 +19,7 @@ import java.util.Queue;
 @Scope("prototype")
 public class DatabaseRefreshCommand extends QuantCommand {
 
-    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         dataService.deleteAllNotifications();
         dataService.deleteAllTasks();

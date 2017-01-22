@@ -20,7 +20,7 @@ import java.util.*;
 @Scope("prototype")
 public class HelpCommand extends QuantCommand {
 
-    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         output.add(new OutputMessage(input, ctx.getMessage("command.help", null, handlingProcess.getAccountEntity().LOCALE)));
         output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, handlingProcess.getAccountEntity().LOCALE))

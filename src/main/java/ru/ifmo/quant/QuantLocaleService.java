@@ -9,7 +9,7 @@ import java.util.Locale;
  * Created by andrey on 18.01.2017.
  */
 @Component
-public class QuantLocale {
+public class QuantLocaleService {
 
     public static Locale EN = Locale.US;
     public static Locale RU = new Locale("ru", "RU");

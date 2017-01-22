@@ -1,14 +1,12 @@
 package ru.ifmo.quant.commands;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.ifmo.quant.HandlingProcess;
-import ru.ifmo.quant.KeyboardEnum;
-import ru.ifmo.quant.OutputMessage;
-import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.*;
 import ru.ifmo.quant.entities.AccountEntity;
+import ru.ifmo.quant.exceptions.BadCommandReturnException;
 
-import java.sql.Time;
 import java.util.*;
 
 /**
@@ -18,33 +16,30 @@ import java.util.*;
 @Scope("prototype")
 public class StartCommand extends QuantCommand {
 
-    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess process) {
-        StringBuilder stringBuilder = new StringBuilder();
+    @Autowired
+    TimeZoneService timeZoneService;
+
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        if (process.getAccountEntity() == null) {
-            stringBuilder.append(ctx.getMessage("command.start", null, quantLocale.DEFAULT)).append("\n");
+        if (handlingProcess.getAccountEntity() == null) {
+            output.add(new OutputMessage(input, ctx.getMessage("command.start", null, quantLocaleService.DEFAULT)));
             AccountEntity accountEntity = new AccountEntity();
             accountEntity.insertKey(input.getMessageAddress());
-            accountEntity.setTimeZoneOffset(getTimeZoneOffset(input));
-            accountEntity.setLanguage(quantLocale.DEFAULT.getLanguage());
+            accountEntity.setTimeZone(timeZoneService.getDefault().getID());
+            accountEntity.setLanguage(quantLocaleService.DEFAULT.getLanguage());
             dataService.save(accountEntity);
-            process.setAccountEntity(accountEntity);
-            //TODO: line below is test
-            stringBuilder.append("\n"+accountEntity.getTimeZoneOffset()+"\n");
+            handlingProcess.setAccountEntity(accountEntity);
+            handlingProcess.changeState(HandlingState.CHOOSE_LANGUAGE_ON_START);
+            try {
+                output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
+            } catch (BadCommandReturnException e) {
+                e.printStackTrace();
+            }
         } else {
-            stringBuilder.append(ctx.getMessage("command.start.again", null, process.getAccountEntity().LOCALE));
+            output.add(new OutputMessage(input, ctx.getMessage("command.start.again", null, handlingProcess.getAccountEntity().LOCALE))
+                .setKeyboard(KeyboardEnum.DEFAULT));
         }
-        QuantMessage answer = new OutputMessage(input, stringBuilder.toString());
-        output.add(answer);
-        answer.setKeyboard(KeyboardEnum.DEFAULT);
         return output;
-    }
-
-    public int getTimeZoneOffset(QuantMessage input) {
-        Long clientTime = input.getDate();
-        Calendar serverCalendar = new GregorianCalendar();
-        TimeZone serverTimeZone = serverCalendar.getTimeZone();
-        return serverTimeZone.getOffset(clientTime);
     }
 
 }

@@ -70,8 +70,6 @@ public class MessageHandler implements ApplicationContextAware {
                 output = command.perform(input, process);
             } catch (BadCommandReturnException e) {
                 output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, account.LOCALE)));
-            } catch (NullCommandArgumentException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.empty", null, account.LOCALE)));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } catch (SecurityException e) {

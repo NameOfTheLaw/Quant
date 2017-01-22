@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by andrey on 21.11.2016.
  */
-@Component(value = "dataService")
+@Component("dataService")
 public class DataServiceImpl implements DataService {
 
     @Autowired

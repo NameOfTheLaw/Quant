@@ -65,8 +65,6 @@ public class ChooseTaskCommand extends QuantCommand {
                             output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
                         } catch (BadCommandReturnException e) {
                             e.printStackTrace();
-                        } catch (NullCommandArgumentException e) {
-                            e.printStackTrace();
                         }
                         return output;
                     } else {

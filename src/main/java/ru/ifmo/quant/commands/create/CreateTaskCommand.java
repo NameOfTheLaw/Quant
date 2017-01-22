@@ -60,8 +60,6 @@ public class CreateTaskCommand extends QuantCommand {
                     return output;
                 } catch (BadCommandReturnException e) {
                     e.printStackTrace();
-                } catch (NullCommandArgumentException e) {
-                    e.printStackTrace();
                 }
             } else {
                 answer = ctx.getMessage("command.createtask.confirmation", new Object[]{taskEntity.getBody()}, handlingProcess.getAccountEntity().LOCALE);

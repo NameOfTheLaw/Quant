@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.*;
 import ru.ifmo.quant.exceptions.BadCommandReturnException;
-import ru.ifmo.quant.exceptions.NullCommandArgumentException;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -18,7 +17,7 @@ import java.util.Queue;
 public class ChangeLanguageCommand extends QuantCommand {
 
     @Autowired
-    QuantLocale quantLocale;
+    QuantLocaleService quantLocaleService;
 
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
@@ -28,12 +27,21 @@ public class ChangeLanguageCommand extends QuantCommand {
             init();
         } else {
             String language = input.getText().replace("/","");
-            if (quantLocale.isLocale(language)) {
+            if (quantLocaleService.isLocale(language)) {
                 handlingProcess.getAccountEntity().setLanguage(language);
                 dataService.save(handlingProcess.getAccountEntity());
                 output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.successfull", null, handlingProcess.getAccountEntity().LOCALE))
                     .setKeyboard(KeyboardEnum.DEFAULT));
-                handlingProcess.changeState(HandlingState.DEFAULT);
+                if (isAfterState()) {
+                    handlingProcess.changeState(getAfterState());
+                    try {
+                        output.addAll(handlingProcess.getHandlingState().getCommandExtractor().extract(input).perform(input, handlingProcess));
+                    } catch (BadCommandReturnException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    handlingProcess.changeState(HandlingState.DEFAULT);
+                }
             } else {
                 output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.wronglanguage", null, handlingProcess.getAccountEntity().LOCALE))
                     .setKeyboard(KeyboardEnum.CHANGE_LANGUAGE));

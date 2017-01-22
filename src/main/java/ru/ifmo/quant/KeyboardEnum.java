@@ -19,7 +19,8 @@ public enum KeyboardEnum {
     CANCEL(new String[][] {{"/cancel"}}),
     ADMIN(new String[][] {{"/botstatus", "/refreshDB"},{"/cancel"}}),
     ACCOUNT_SETTINGS(new String[][] {{"/changelanguage"},{"/cancel"}}),
-    CHANGE_LANGUAGE(new String[][] {{"/en", "/ru"}});
+    CHANGE_LANGUAGE(new String[][] {{"/en", "/ru"}}),
+    SEND_LOCATION(new KeyboardButton[][] {{new KeyboardButton().setText("send location").setRequestLocation(true)}});
 
     ReplyKeyboardMarkup keyboard;
 
@@ -33,7 +34,20 @@ public enum KeyboardEnum {
             rows.add(row);
         }
         keyboard = new ReplyKeyboardMarkup();
-        //keyboard.setOneTimeKeyboad(true);
+        keyboard.setResizeKeyboard(true);
+        keyboard.setKeyboard(rows);
+    }
+
+    KeyboardEnum(KeyboardButton[][] commands) {
+        List<KeyboardRow> rows = new ArrayList<KeyboardRow>();
+        for (int i=0; i<commands.length; i++) {
+            KeyboardRow row = new KeyboardRow();
+            for (int j=0; j<commands[i].length; j++) {
+                row.add(commands[i][j]);
+            }
+            rows.add(row);
+        }
+        keyboard = new ReplyKeyboardMarkup();
         keyboard.setResizeKeyboard(true);
         keyboard.setKeyboard(rows);
     }

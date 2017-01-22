@@ -1,12 +1,12 @@
 package ru.ifmo.quant.entities;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.ifmo.quant.MessageAddress;
-import ru.ifmo.quant.QuantLocale;
+import ru.ifmo.quant.QuantLocaleService;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by andrey on 04.11.2016.
@@ -14,12 +14,15 @@ import java.util.Locale;
 @Entity
 @Table(name = "ACCOUNT")
 public class AccountEntity {
+
+    public Locale LOCALE;
+    public TimeZone TIME_ZONE;
+
     private Long id;
     private Long vkKey;
     private Long telegramKey;
     private String language;
-    public Locale LOCALE;
-    private Integer timeZoneOffset;
+    private String timeZone;
     private List<TaskEntity> tasks;
 
     @Id
@@ -62,18 +65,20 @@ public class AccountEntity {
 
     public void setLanguage(String language) {
         this.language = language;
-        LOCALE = QuantLocale.getLocale(getLanguage());
+        LOCALE = QuantLocaleService.getLocale(language);
     }
 
     @Basic
-    @Column(name = "TIME_ZONE_OFFSET")
-    public Integer getTimeZoneOffset() {
-        return timeZoneOffset;
+    @Column(name = "TIME_ZONE")
+    public String getTimeZone() {
+        return timeZone;
     }
 
-    public void setTimeZoneOffset(Integer timeZoneOffset) {
-        this.timeZoneOffset = timeZoneOffset;
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+        TIME_ZONE = TimeZone.getTimeZone(timeZone);
     }
+
 
     @OneToMany(mappedBy = "account")
     public List<TaskEntity> getTasks() {

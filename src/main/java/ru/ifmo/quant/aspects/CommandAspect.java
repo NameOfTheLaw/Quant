@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.HandlingProcess;
 import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.commands.QuantCommandNames;
 import ru.ifmo.quant.commands.extractors.CommandExtractor;
 import ru.ifmo.quant.exceptions.*;
 
@@ -20,28 +21,22 @@ import java.util.Queue;
  */
 @Component
 @Aspect
-public class CommandAspect implements ApplicationContextAware {
+public class CommandAspect extends QuantCommandNames implements ApplicationContextAware {
 
-    private static final String cancelCommand = "/cancel";
-    private static final String helpCommand = "/help";
     private ApplicationContext ctx;
 
     @Around(value = "execution(* ru.ifmo.quant.commands..*.perform(..)) && args(quantMessage, handlingProcess)")
     private Object performCommand(ProceedingJoinPoint pjp, QuantMessage quantMessage, HandlingProcess handlingProcess) throws Throwable {
-        if (!quantMessage.hasText()) {
-            throw new NullCommandArgumentException("Commands need not null message text to perform operations");
-        } else {
-            Collection retVal = (Collection) pjp.proceed();
-            if (retVal == null) throw new NullCommandReturnException("Command performing returned null");
-            if (retVal.isEmpty()) throw new EmptyCommandReturnException("Command performing returned empty Collection");
-            return retVal;
-        }
+        Collection retVal = (Collection) pjp.proceed();
+        if (retVal == null) throw new NullCommandReturnException("Command performing returned null");
+        if (retVal.isEmpty()) throw new EmptyCommandReturnException("Command performing returned empty Collection");
+        return retVal;
     }
 
 
     @Around(value = "execution(* ru.ifmo.quant.HandlingState.extractCommand(..)) && args(quantMessage)")
     private Object extractCommand(ProceedingJoinPoint pjp, QuantMessage quantMessage) throws Throwable {
-        if (quantMessage.getText().equals(cancelCommand)) {
+        if (quantMessage.hasText() && quantMessage.getText().equals(CANCEL_COMMAND)) {
             return ctx.getBean("cancelCommand");
         }
         Object retVal = pjp.proceed();

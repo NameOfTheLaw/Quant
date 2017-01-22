@@ -1,5 +1,6 @@
 package ru.ifmo.quant;
 
+import org.telegram.telegrambots.api.objects.Location;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
@@ -17,6 +18,7 @@ public abstract class QuantMessage {
     protected MessageAddress messageAddress;
     protected KeyboardEnum keyboard;
     protected Long date;
+    protected Location location;
 
     public String getText() {
         return text;
@@ -62,6 +64,14 @@ public abstract class QuantMessage {
 
     public void setDate(Integer date) {
         this.date = date.longValue();
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override

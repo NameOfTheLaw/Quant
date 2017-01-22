@@ -18,7 +18,7 @@ import java.util.Queue;
 @Scope("prototype")
 public class RemoveTaskCommand extends QuantCommand {
 
-    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) throws BadCommandReturnException, NullCommandArgumentException {
+    public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         dataService.delete(handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class));
         output.add(new OutputMessage(input, ctx.getMessage("command.edittask.removetask.succesfull", null, handlingProcess.getAccountEntity().LOCALE))
