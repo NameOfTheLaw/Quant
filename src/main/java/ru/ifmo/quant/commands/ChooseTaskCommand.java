@@ -1,5 +1,6 @@
 package ru.ifmo.quant.commands;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.*;
@@ -22,17 +23,21 @@ public class ChooseTaskCommand extends QuantCommand {
     private List<TaskEntity> tasksList;
     private TaskEntity task;
 
+    @Autowired
+    QuantFormatter quantFormatter;
+
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         StringBuilder stringBuilder = new StringBuilder();
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         if (!isInit()) {
             tasksList = dataService.findTaskEntity(handlingProcess.getAccountEntity());
             if (!tasksList.isEmpty()) {
-                stringBuilder.append(ctx.getMessage("command.edittask.intro", null, handlingProcess.getAccountEntity().LOCALE)+"\n");
-                int i = 0;
+                stringBuilder.append(ctx.getMessage("command.edittask.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))+"\n");
                 for (TaskEntity task: tasksList) {
-                    i++;
-                    stringBuilder.append(i+") "+task.toString()+"\n");
+                    stringBuilder.append(tasksList.indexOf(task))
+                        .append(") ")
+                        .append(quantFormatter.format(task))
+                        .append("\n");
                 }
                 output.add(new OutputMessage(input, stringBuilder.toString())
                     .setKeyboard(KeyboardEnum.CANCEL));
@@ -45,7 +50,7 @@ public class ChooseTaskCommand extends QuantCommand {
                 init();
                 return output;
             } else {
-                stringBuilder.append(ctx.getMessage("command.edittask.notasks", null, handlingProcess.getAccountEntity().LOCALE));
+                stringBuilder.append(ctx.getMessage("command.edittask.notasks", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())));
                 handlingProcess.clearParameters();
                 handlingProcess.changeState(HandlingState.DEFAULT);
             }
@@ -68,14 +73,14 @@ public class ChooseTaskCommand extends QuantCommand {
                         }
                         return output;
                     } else {
-                        stringBuilder.append(ctx.getMessage("command.edittask.change", null, handlingProcess.getAccountEntity().LOCALE));
+                        stringBuilder.append(ctx.getMessage("command.edittask.change", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())));
                         handlingProcess.changeState(HandlingState.CHOOSE_TASK_PARAMETER);
                         output.add(new OutputMessage(input, stringBuilder.toString())
                             .setKeyboard(KeyboardEnum.CHOOSE_TASK_PARAMETER));
                         return output;
                     }
                 } else {
-                    stringBuilder.append(ctx.getMessage("command.edittask.outoftasksindex", null, handlingProcess.getAccountEntity().LOCALE));
+                    stringBuilder.append(ctx.getMessage("command.edittask.outoftasksindex", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())));
                 }
             }
         }

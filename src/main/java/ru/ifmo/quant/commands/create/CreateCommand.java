@@ -20,7 +20,7 @@ public class CreateCommand extends QuantCommand {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.CREATE);
-        output.add(new OutputMessage(input, ctx.getMessage("command.create.intro", null, handlingProcess.getAccountEntity().LOCALE)).setKeyboard(KeyboardEnum.CREATE));
+        output.add(new OutputMessage(input, ctx.getMessage("command.create.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))).setKeyboard(KeyboardEnum.CREATE));
         return output;
     }
 }

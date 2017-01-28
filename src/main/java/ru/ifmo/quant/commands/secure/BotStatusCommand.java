@@ -22,12 +22,12 @@ import java.util.Queue;
 public class BotStatusCommand extends QuantCommand {
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        output.add(new OutputMessage(input, ctx.getMessage("admin.intro", null, handlingProcess.getAccountEntity().LOCALE)));
+        output.add(new OutputMessage(input, ctx.getMessage("admin.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))));
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(ctx.getMessage("admin.botstatus.count.accounts", null, handlingProcess.getAccountEntity().LOCALE) + dataService.countAccountEntities() + "\n");
-        stringBuilder.append(ctx.getMessage("admin.botstatus.count.tasks", null, handlingProcess.getAccountEntity().LOCALE) + dataService.countTaskEntities() + "\n");
-        stringBuilder.append(ctx.getMessage("admin.botstatus.count.notifications", null, handlingProcess.getAccountEntity().LOCALE) + dataService.countNotificationEntities() + "\n");
-        stringBuilder.append(ctx.getMessage("admin.botstatus.servertime", null, handlingProcess.getAccountEntity().LOCALE) + new Date(System.currentTimeMillis()));
+        stringBuilder.append(ctx.getMessage("admin.botstatus.count.accounts", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())) + dataService.countAccountEntities() + "\n");
+        stringBuilder.append(ctx.getMessage("admin.botstatus.count.tasks", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())) + dataService.countTaskEntities() + "\n");
+        stringBuilder.append(ctx.getMessage("admin.botstatus.count.notifications", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())) + dataService.countNotificationEntities() + "\n");
+        stringBuilder.append(ctx.getMessage("admin.botstatus.servertime", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())) + new Date(System.currentTimeMillis()));
         output.add(new OutputMessage(input, stringBuilder.toString()).setKeyboard(KeyboardEnum.ADMIN));
         return output;
     }

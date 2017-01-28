@@ -18,5 +18,6 @@ public abstract class QuantCommandNames {
     protected static final String EDIT_NOTIFICATION_COMMAND = "/editnotification";
     protected static final String SETTINGS_COMMAND = "/settings";
     protected static final String CANCEL_COMMAND = "/cancel";
+    protected static final String CHANGE_TIME_ZONE_COMMAND = "/changetimezone";
 
 }

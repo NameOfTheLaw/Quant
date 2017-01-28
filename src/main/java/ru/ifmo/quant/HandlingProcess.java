@@ -30,20 +30,6 @@ public class HandlingProcess implements InitializingBean {
         processParameters = new HashMap<String, Object>();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) return false;
-
-        AccountEntity that = (AccountEntity) o;
-
-        return accountEntity.getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return accountEntity.getId().hashCode();
-    }
-
     public HandlingState getHandlingState() {
         return handlingState;
     }
@@ -90,5 +76,19 @@ public class HandlingProcess implements InitializingBean {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+
+        AccountEntity that = (AccountEntity) o;
+
+        return accountEntity.getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return accountEntity.getId().hashCode();
     }
 }

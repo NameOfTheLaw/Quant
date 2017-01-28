@@ -23,8 +23,8 @@ public class DatabaseRefreshCommand extends QuantCommand {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         dataService.deleteAllNotifications();
         dataService.deleteAllTasks();
-        output.add(new OutputMessage(input, ctx.getMessage("admin.intro", null, handlingProcess.getAccountEntity().LOCALE)));
-        output.add(new OutputMessage(input, ctx.getMessage("admin.refreshDB", null, handlingProcess.getAccountEntity().LOCALE)));
+        output.add(new OutputMessage(input, ctx.getMessage("admin.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))));
+        output.add(new OutputMessage(input, ctx.getMessage("admin.refreshDB", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))));
         return output;
     }
 }

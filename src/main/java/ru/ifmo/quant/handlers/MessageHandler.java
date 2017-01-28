@@ -36,6 +36,8 @@ public class MessageHandler implements ApplicationContextAware {
     @Autowired
     private DataService dataService;
     @Autowired
+    private QuantLocaleService quantLocaleService;
+    @Autowired
     private MessagesPool messagesPool;
     @Autowired
     private QuantAuthentificationManager authentificationManager;
@@ -52,28 +54,35 @@ public class MessageHandler implements ApplicationContextAware {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(process.getAccountEntity().getId()));
+            process.setAuthentication(response);
             processContainer.addProcess(process);
         } else {
             process = processContainer.getProcess(account);
             if (process == null) {
-                process = createProcess(account);
+                process = ctx.getBean("handlingProcess", HandlingProcess.class);
+                process.setAccountEntity(account);
+                Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(account.getId()));
+                process.setAuthentication(response);
+                processContainer.addProcess(process);
             }
             QuantCommand command = null;
             try {
                 command = process.getHandlingState().extractCommand(input);
             } catch (NoSuchCommandInContextException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, account.LOCALE)).setKeyboard(KeyboardEnum.CANCEL));
+                output.add(new OutputMessage(input, ctx.getMessage("error.commandwrongcontext", new Object[] {input.getText()}, quantLocaleService.getLocale(account)))
+                        .setKeyboard(KeyboardEnum.CANCEL));
             } catch (NoSuchCommandException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, account.LOCALE)));
+                output.add(new OutputMessage(input, ctx.getMessage("error.nocommand", null, quantLocaleService.getLocale(account))));
             }
             try {
                 output = command.perform(input, process);
             } catch (BadCommandReturnException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, account.LOCALE)));
+                output.add(new OutputMessage(input, ctx.getMessage("error.wtf", null, quantLocaleService.getLocale(account))));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } catch (SecurityException e) {
-                output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, account.LOCALE)));
+                output.add(new OutputMessage(input, ctx.getMessage("error.noaccess", null, quantLocaleService.getLocale(account))));
             }
         }
         messagesPool.addToPool(output);
@@ -84,12 +93,4 @@ public class MessageHandler implements ApplicationContextAware {
         this.ctx = applicationContext;
     }
 
-    private HandlingProcess createProcess(AccountEntity account) {
-        HandlingProcess process = ctx.getBean("handlingProcess", HandlingProcess.class);
-        process.setAccountEntity(account);
-        Authentication response = authentificationManager.authenticate(new QuantAuthentificationToken(account.getId()));
-        process.setAuthentication(response);
-        processContainer.addProcess(process);
-        return process;
-    }
 }

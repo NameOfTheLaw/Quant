@@ -17,16 +17,16 @@ import java.util.*;
 public class StartCommand extends QuantCommand {
 
     @Autowired
-    TimeZoneService timeZoneService;
+    DateTimeService dateTimeService;
 
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         if (handlingProcess.getAccountEntity() == null) {
-            output.add(new OutputMessage(input, ctx.getMessage("command.start", null, quantLocaleService.DEFAULT)));
+            output.add(new OutputMessage(input, ctx.getMessage("command.start", null, quantLocaleService.getDefault())));
             AccountEntity accountEntity = new AccountEntity();
             accountEntity.insertKey(input.getMessageAddress());
-            accountEntity.setTimeZone(timeZoneService.getDefault().getID());
-            accountEntity.setLanguage(quantLocaleService.DEFAULT.getLanguage());
+            accountEntity.setTimeZone(dateTimeService.getDefaultTimeZone().getID());
+            accountEntity.setLanguage(quantLocaleService.getDefault().getLanguage());
             dataService.save(accountEntity);
             handlingProcess.setAccountEntity(accountEntity);
             handlingProcess.changeState(HandlingState.CHOOSE_LANGUAGE_ON_START);
@@ -36,7 +36,7 @@ public class StartCommand extends QuantCommand {
                 e.printStackTrace();
             }
         } else {
-            output.add(new OutputMessage(input, ctx.getMessage("command.start.again", null, handlingProcess.getAccountEntity().LOCALE))
+            output.add(new OutputMessage(input, ctx.getMessage("command.start.again", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
                 .setKeyboard(KeyboardEnum.DEFAULT));
         }
         return output;

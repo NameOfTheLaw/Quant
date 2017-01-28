@@ -22,7 +22,7 @@ public class ChangeLanguageCommand extends QuantCommand {
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         if (!isInit()) {
-            output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.intro", null, handlingProcess.getAccountEntity().LOCALE))
+            output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
             .setKeyboard(KeyboardEnum.CHANGE_LANGUAGE));
             init();
         } else {
@@ -30,7 +30,7 @@ public class ChangeLanguageCommand extends QuantCommand {
             if (quantLocaleService.isLocale(language)) {
                 handlingProcess.getAccountEntity().setLanguage(language);
                 dataService.save(handlingProcess.getAccountEntity());
-                output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.successfull", null, handlingProcess.getAccountEntity().LOCALE))
+                output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.successfull", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
                     .setKeyboard(KeyboardEnum.DEFAULT));
                 if (isAfterState()) {
                     handlingProcess.changeState(getAfterState());
@@ -43,7 +43,7 @@ public class ChangeLanguageCommand extends QuantCommand {
                     handlingProcess.changeState(HandlingState.DEFAULT);
                 }
             } else {
-                output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.wronglanguage", null, handlingProcess.getAccountEntity().LOCALE))
+                output.add(new OutputMessage(input, ctx.getMessage("command.accountsettings.changelanguage.wronglanguage", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
                     .setKeyboard(KeyboardEnum.CHANGE_LANGUAGE));
             }
         }

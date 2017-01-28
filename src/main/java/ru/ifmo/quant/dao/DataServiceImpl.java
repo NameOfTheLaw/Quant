@@ -3,16 +3,20 @@ package ru.ifmo.quant.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.ifmo.quant.MessageAddress;
+import ru.ifmo.quant.QuantLocaleService;
 import ru.ifmo.quant.QuantMessage;
+import ru.ifmo.quant.DateTimeService;
 import ru.ifmo.quant.entities.AccountEntity;
 import ru.ifmo.quant.entities.NotificationEntity;
 import ru.ifmo.quant.entities.TaskEntity;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.WeekFields;
 
 /**
  * Created by andrey on 21.11.2016.
@@ -21,11 +25,15 @@ import java.util.List;
 public class DataServiceImpl implements DataService {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
     @Autowired
-    NotificationRepository notificationRepository;
+    private NotificationRepository notificationRepository;
     @Autowired
-    TaskRepository taskRepository;
+    private TaskRepository taskRepository;
+    @Autowired
+    private DateTimeService dateTimeService;
+    @Autowired
+    private QuantLocaleService quantLocaleService;
 
     public AccountEntity findAccountEntity(Long id) {
         return accountRepository.findOne(id);
@@ -63,7 +71,7 @@ public class DataServiceImpl implements DataService {
         return notificationRepository.findOne(id);
     }
 
-    public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity, Timestamp serverDate, Long period) {
+    public List<NotificationEntity> findNotificationEntity(TaskEntity taskEntity, Date serverDate, Long period) {
         return notificationRepository.findByTaskAndDateBefore(taskEntity, new Timestamp(serverDate.getTime()+period));
     }
 
@@ -71,11 +79,11 @@ public class DataServiceImpl implements DataService {
         return notificationRepository.findByTask(taskEntity);
     }
 
-    public List<NotificationEntity> findNotificationEntity(AccountEntity accountEntity, Timestamp serverDate, Long period) {
+    public List<NotificationEntity> findNotificationEntity(AccountEntity accountEntity, Date serverDate, Long period) {
         return notificationRepository.findByAccountAndDateBefore(accountEntity, new Timestamp(serverDate.getTime()+period));
     }
 
-    public List<NotificationEntity> findNotificationEntity(Timestamp serverDate, Long period) {
+    public List<NotificationEntity> findNotificationEntity(Date serverDate, Long period) {
         return notificationRepository.findByDateBefore(new Timestamp(serverDate.getTime()+period));
     }
 
@@ -103,11 +111,11 @@ public class DataServiceImpl implements DataService {
         return taskRepository.findByAccount(accountEntity);
     }
 
-    public List<TaskEntity> findTaskEntity(AccountEntity accountEntity, Timestamp serverDate, Long period) {
+    public List<TaskEntity> findTaskEntity(AccountEntity accountEntity, Date serverDate, Long period) {
         return taskRepository.findByAccountAndDateBefore(accountEntity, new Timestamp(serverDate.getTime()+period));
     }
 
-    public List<TaskEntity> findTaskEntity(Timestamp serverDate, Long period) {
+    public List<TaskEntity> findTaskEntity(Date serverDate, Long period) {
         return taskRepository.findByDateBefore(new Timestamp(serverDate.getTime()+period));
     }
 
@@ -127,32 +135,49 @@ public class DataServiceImpl implements DataService {
         return taskRepository.count();
     }
 
-    public List<TaskEntity> findTaskEntityForToday(AccountEntity accountEntity, Timestamp date) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
-        calendar.add(Calendar.DATE, 1);
-        Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
+    public List<TaskEntity> findTaskEntityForWeek(AccountEntity accountEntity) {
+        ZoneId serverZoneId = ZoneId.of(dateTimeService.getDefaultTimeZone().getID());
+        ZoneId clientZoneId = ZoneId.of(accountEntity.getTimeZone());
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        ZonedDateTime serverDateTime = localDateTime.atZone(serverZoneId);
+        ZonedDateTime clientDateTime = serverDateTime.withZoneSameInstant(clientZoneId);
+
+        ZonedDateTime clientStartDateTime = clientDateTime
+                .with(WeekFields.of(quantLocaleService.getLocale(accountEntity)).dayOfWeek(), 1)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0);
+        ZonedDateTime clientEndDateTime = clientDateTime
+                .with(WeekFields.of(quantLocaleService.getLocale(accountEntity)).dayOfWeek(), 7)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0);
+
+        Timestamp timeStart = Timestamp.from(clientStartDateTime.withZoneSameInstant(serverZoneId).toInstant());
+        Timestamp timeEnd = Timestamp.from(clientEndDateTime.withZoneSameInstant(serverZoneId).toInstant());
         return taskRepository.findByAccountAndDateBetween(accountEntity, timeStart, timeEnd);
     }
 
-    public List<TaskEntity> findTaskEntityForWeek(AccountEntity accountEntity, Timestamp date) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        //TODO: add timezone week. In US SUNDAY-MONDAY
-        calendar.setFirstDayOfWeek(Calendar.MONDAY);
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        Timestamp timeStart = new Timestamp(calendar.getTime().getTime());
-        calendar.add(Calendar.DATE, 7);
-        Timestamp timeEnd = new Timestamp(calendar.getTime().getTime());
+    public List<TaskEntity> findTaskEntityForToday(AccountEntity accountEntity) {
+        ZoneId serverZoneId = ZoneId.of(dateTimeService.getDefaultTimeZone().getID());
+        ZoneId clientZoneId = ZoneId.of(accountEntity.getTimeZone());
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        ZonedDateTime serverDateTime = localDateTime.atZone(serverZoneId);
+        ZonedDateTime clientDateTime = serverDateTime.withZoneSameInstant(clientZoneId);
+
+        ZonedDateTime clientStartDateTime = clientDateTime
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0);
+        ZonedDateTime clientEndDateTime = clientDateTime
+                .withHour(23)
+                .withMinute(59)
+                .withSecond(59);
+
+        Timestamp timeStart = Timestamp.from(clientStartDateTime.withZoneSameInstant(serverZoneId).toInstant());
+        Timestamp timeEnd = Timestamp.from(clientEndDateTime.withZoneSameInstant(serverZoneId).toInstant());
         return taskRepository.findByAccountAndDateBetween(accountEntity, timeStart, timeEnd);
     }
 }

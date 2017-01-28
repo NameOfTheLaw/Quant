@@ -21,7 +21,7 @@ public class RemoveTaskCommand extends QuantCommand {
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         dataService.delete(handlingProcess.getParameter(HandlingProcess.TASK, TaskEntity.class));
-        output.add(new OutputMessage(input, ctx.getMessage("command.edittask.removetask.succesfull", null, handlingProcess.getAccountEntity().LOCALE))
+        output.add(new OutputMessage(input, ctx.getMessage("command.edittask.removetask.succesfull", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
             .setKeyboard(KeyboardEnum.DEFAULT));
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.DEFAULT);

@@ -19,7 +19,7 @@ public class CancelCommand extends QuantCommand {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.DEFAULT);
-        String answer = ctx.getMessage("command.cancel.text", null, handlingProcess.getAccountEntity().LOCALE);
+        String answer = ctx.getMessage("command.cancel.text", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()));
         output.add(new OutputMessage(input, answer).setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }

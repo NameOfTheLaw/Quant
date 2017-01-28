@@ -18,7 +18,7 @@ public enum KeyboardEnum {
     CHOOSE_TASK_PARAMETER(new String[][] {{"/edittaskbody", "/edittasktime"}, {"/replacetask", "/removetask"}}),
     CANCEL(new String[][] {{"/cancel"}}),
     ADMIN(new String[][] {{"/botstatus", "/refreshDB"},{"/cancel"}}),
-    ACCOUNT_SETTINGS(new String[][] {{"/changelanguage"},{"/cancel"}}),
+    ACCOUNT_SETTINGS(new String[][] {{"/changelanguage"},{"/changetimezone"},{"/cancel"}}),
     CHANGE_LANGUAGE(new String[][] {{"/en", "/ru"}}),
     SEND_LOCATION(new KeyboardButton[][] {{new KeyboardButton().setText("send location").setRequestLocation(true)}});
 

@@ -1,9 +1,10 @@
 package ru.ifmo.quant.entities;
 
-import ru.ifmo.quant.DateExtractor;
+import ru.ifmo.quant.ExtractedDate;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
 
@@ -20,7 +21,7 @@ public class TaskEntity {
     private Long id;
     private String title;
     private String body;
-    private Timestamp date;
+    private Date date;
     private int specifiedTime;
     private AccountEntity account;
     private List<NotificationEntity> notifications;
@@ -59,11 +60,11 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "SERVER_DATE")
-    public Timestamp getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -137,9 +138,9 @@ public class TaskEntity {
         return stringBuilder.toString();
     }
 
-    public void extractDate(DateExtractor dateExtractor) {
-        setDate(dateExtractor.getDate());
-        if (dateExtractor.isSpecifiedTime()) {
+    public void loadDate(ExtractedDate extractedDate) {
+        setDate(extractedDate.getServerDate());
+        if (extractedDate.isSpecifiedTime()) {
             setSpecifiedTime(this.SPECIFIED_TIME);
         } else {
             setSpecifiedTime(this.NO_SPECIFIED_TIME);

@@ -22,8 +22,8 @@ public class HelpCommand extends QuantCommand {
 
     public Queue<QuantMessage> perform(QuantMessage input, HandlingProcess handlingProcess) {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
-        output.add(new OutputMessage(input, ctx.getMessage("command.help", null, handlingProcess.getAccountEntity().LOCALE)));
-        output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, handlingProcess.getAccountEntity().LOCALE))
+        output.add(new OutputMessage(input, ctx.getMessage("command.help", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity()))));
+        output.add(new OutputMessage(input, ctx.getMessage("command.help.howto", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
             .setKeyboard(KeyboardEnum.DEFAULT));
         return output;
     }

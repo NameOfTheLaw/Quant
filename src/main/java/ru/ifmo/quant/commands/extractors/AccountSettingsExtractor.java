@@ -15,8 +15,12 @@ public class AccountSettingsExtractor extends CommandExtractor {
     public QuantCommand extract(QuantMessage message) {
         if (isExecuting()) return getExecutingCommand();
         QuantCommand command = null;
-        if (message.getText().equals(CHANGE_LANGUAGE_COMMAND)) {
-            command = ctx.getBean("changeLanguageCommand", QuantCommand.class);
+        switch (message.getText()) {
+            case CHANGE_LANGUAGE_COMMAND:
+                command = ctx.getBean("changeLanguageCommand", QuantCommand.class);
+                break;
+            case CHANGE_TIME_ZONE_COMMAND:
+                command = ctx.getBean("changeLocationCommand", QuantCommand.class);
         }
         setExecutingCommand(command);
         return command;

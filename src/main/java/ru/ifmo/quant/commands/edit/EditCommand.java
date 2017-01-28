@@ -20,7 +20,7 @@ public class EditCommand extends QuantCommand {
         Queue<QuantMessage> output = new LinkedList<QuantMessage>();
         handlingProcess.clearParameters();
         handlingProcess.changeState(HandlingState.EDIT);
-        output.add(new OutputMessage(input, ctx.getMessage("command.edit.intro", null, handlingProcess.getAccountEntity().LOCALE))
+        output.add(new OutputMessage(input, ctx.getMessage("command.edit.intro", null, quantLocaleService.getLocale(handlingProcess.getAccountEntity())))
                 .setKeyboard(KeyboardEnum.EDIT));
         return output;
     }

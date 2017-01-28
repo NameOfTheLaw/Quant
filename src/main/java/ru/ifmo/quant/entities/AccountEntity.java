@@ -15,9 +15,6 @@ import java.util.TimeZone;
 @Table(name = "ACCOUNT")
 public class AccountEntity {
 
-    public Locale LOCALE;
-    public TimeZone TIME_ZONE;
-
     private Long id;
     private Long vkKey;
     private Long telegramKey;
@@ -65,7 +62,6 @@ public class AccountEntity {
 
     public void setLanguage(String language) {
         this.language = language;
-        LOCALE = QuantLocaleService.getLocale(language);
     }
 
     @Basic
@@ -76,7 +72,6 @@ public class AccountEntity {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
-        TIME_ZONE = TimeZone.getTimeZone(timeZone);
     }
 
 
@@ -90,11 +85,12 @@ public class AccountEntity {
     }
 
     public void insertKey(MessageAddress messageAddress) {
-        if (messageAddress.getSocial().equals(MessageAddress.TELEGRAM_ALIAS)) {
-            setTelegramKey(messageAddress.getKey());
-        }
-        if (messageAddress.getSocial().equals(MessageAddress.VK_ALIAS)) {
-            setVkKey(messageAddress.getKey());
+        switch (messageAddress.getSocial()) {
+            case MessageAddress.TELEGRAM_ALIAS:
+                setTelegramKey(messageAddress.getKey());
+                break;
+            case MessageAddress.VK_ALIAS:
+                setVkKey(messageAddress.getKey());
         }
     }
 

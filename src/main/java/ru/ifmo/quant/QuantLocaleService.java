@@ -11,25 +11,37 @@ import java.util.Locale;
 @Component
 public class QuantLocaleService {
 
-    public static Locale EN = Locale.US;
-    public static Locale RU = new Locale("ru", "RU");
-    public static Locale DEFAULT = EN;
+    private Locale EN = Locale.US;
+    private Locale RU = new Locale("ru", "RU");
+    private Locale DEFAULT = EN;
 
-    public static Locale getLocale(String localeString) {
-        if (localeString.toLowerCase().equals("en")) {
-            return EN;
+    public Locale getLocale(String localeString) {
+        switch (localeString) {
+            case "en":
+                return EN;
+            case "ru":
+                return RU;
+            default:
+                return DEFAULT;
         }
-        if (localeString.toLowerCase().equals("ru")) {
-            return RU;
-        }
-        return DEFAULT;
     }
 
-    public static boolean isLocale(String localeString) {
-        if (localeString.toLowerCase().equals("en") || localeString.toLowerCase().equals("ru")) {
-            return true;
+    public Locale getLocale(AccountEntity accountEntity) {
+        return getLocale(accountEntity.getLanguage());
+    }
+
+    public boolean isLocale(String localeString) {
+        switch (localeString) {
+            case "en":
+            case "ru":
+                return true;
+            default:
+                return false;
         }
-        return false;
+    }
+
+    public Locale getDefault() {
+        return DEFAULT;
     }
 
 }
